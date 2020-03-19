@@ -168,4 +168,16 @@ ehthumbs.db
 Thumbs.db
 
 # data files
-data/*
+data/
+
+# temp files
+mnist_output/
+reconstructed_*/
+
+# images
+*.jpg
+*.png
+*.tif
+
+# model files
+model/
