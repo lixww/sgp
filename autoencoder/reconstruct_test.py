@@ -11,14 +11,14 @@ from skimage.io import imsave
 from classes import simple_ae
 
 
-data_id = '214v_221r'
+data_id = '102v_107r'
 data_type = 'snip'
 w_h_no = 1
 preprocess_type = 'processed'
 
-data_path = f'data/sgp/{data_id}/{preprocess_type}_{data_type}/*'
-img_save_path = f'reconstructed_{data_type}'
-model_path = 'model'
+data_path = f'autoencoder/data/sgp/{data_id}/{preprocess_type}_{data_type}/*'
+img_save_path = f'autoencoder/reconstructed_{data_type}'
+model_path = 'autoencoder/model'
 
 width_height_list = ((576, 380), (1164, 1088))
 img_width, img_height = width_height_list[w_h_no]

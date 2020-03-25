@@ -181,3 +181,6 @@ reconstructed_*/
 
 # model files
 model/
+
+# vscode
+.vscode

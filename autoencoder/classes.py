@@ -3,20 +3,20 @@ from torch import nn
 
 
 class simple_ae(nn.Module):
-    def __init__(self, img_size):
+    def __init__(self, inp_size):
         super(simple_ae, self).__init__()
         self.encoder = nn.Sequential(
-            nn.Linear(img_size, 10),
+            nn.Linear(inp_size, 16),
             nn.ReLU(True),
-            nn.Linear(10, 5),
-            nn.ReLU(True), nn.Linear(5, 15), nn.ReLU(True), nn.Linear(15, 3))
+            nn.Linear(16, 8),
+            nn.ReLU(True), nn.Linear(8, 4), nn.ReLU(True), nn.Linear(4, 2))
         self.decoder = nn.Sequential(
-            nn.Linear(3, 15),
+            nn.Linear(2, 4),
             nn.ReLU(True),
-            nn.Linear(15, 5),
+            nn.Linear(4, 8),
             nn.ReLU(True),
-            nn.Linear(5, 10),
-            nn.ReLU(True), nn.Linear(10, img_size), nn.Tanh())
+            nn.Linear(8, 16),
+            nn.ReLU(True), nn.Linear(16, inp_size), nn.Tanh())
 
     def forward(self, x):
         x = self.encoder(x)
