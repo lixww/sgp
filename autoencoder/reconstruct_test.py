@@ -8,7 +8,7 @@ from skimage.io import imread_collection
 from skimage.io import imread
 from skimage.io import imsave
 
-from classes import simple_ae
+from models import simple_ae
 
 
 data_id = '102v_107r'

@@ -10,7 +10,7 @@ from torch.utils.data import DataLoader
 from torchvision import transforms
 from torchvision.utils import save_image
 
-from classes import simple_ae
+from models import simple_ae
 
 
 data_id = '102v_107r'

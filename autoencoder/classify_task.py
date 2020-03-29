@@ -9,9 +9,8 @@ from torch.utils.data import DataLoader, RandomSampler
 
 from torchvision import transforms
 
-from classes import simple_ae
+from models import train_simple_ae
 from utils import FolioDataset
-
 
 
 
@@ -40,8 +39,7 @@ data_idx = training_file.index
 # load data
 full_dataset = FolioDataset(location, channel, y_true)
 # split into train & test?
-# 
-dataloader = DataLoader(full_dataset, batch_size=50, shuffle=True)
+#
 
 
 
@@ -49,29 +47,11 @@ dataloader = DataLoader(full_dataset, batch_size=50, shuffle=True)
 learning_rate = 1e-2
 num_epoch = 50
 
-# model setting
-model = simple_ae(len(channel_head))
-criterion = nn.MSELoss()
-optimizer = optim.Adam(model.parameters(), lr=learning_rate, weight_decay=1e-5)
 
-# shuffle dataset
-# for train, test in ShuffleSplit(n_splits=2, test_size=0.1).split(data_idx):
-#     print(train.shape)
-
-for epoch in range(num_epoch):
-    for data in dataloader:
-        inp = data[1]
-        
-        output = model(inp)
-        loss = criterion(output, inp)
-
-        optimizer.zero_grad()
-        loss.backward()
-        optimizer.step()
-
-    # log
-    print('epoch [{}/{}], loss:{:.4f}' 
-            .format(epoch + 1, num_epoch, loss.data.item()))
-
-
-torch.save(model.state_dict(), f'{model_path}/ae_on_{data_class}.pth')
+train_simple_ae(
+    dataset=full_dataset, 
+    inp_dim=len(channel_head),
+    learning_rate=learning_rate,
+    num_epoch=num_epoch,
+    save_path=f'{model_path}/ae_on_{data_class}.pth'
+)
