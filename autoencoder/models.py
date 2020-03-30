@@ -79,8 +79,8 @@ class dae(nn.Module):
     def copy_weights(self, encoder: nn.Linear, decoder: nn.Linear):
         encoder.weight.data.copy_(self.encoder.linear.weight)
         encoder.bias.data.copy_(self.encoder.linear.bias)
-        decoder.weight.data.copy_(self.encoder.linear.weight)
-        decoder.bias.data.copy_(self.encoder.linear.bias)
+        decoder.weight.data.copy_(self.decoder.linear.weight)
+        decoder.bias.data.copy_(self.decoder.linear.bias)
 
 
 def build_units(dimensions):
@@ -106,8 +106,10 @@ class sdae(nn.Module):
         self.dimensions = dimensions
         encoder_units = build_units(dimensions)
         self.encoder = nn.Sequential(*encoder_units)
-        decoder_units = build_units(reversed(dimensions))
-        decoder_units.append(nn.Sequential(OrderedDict(('activation', nn.Softplus()))))
+        decoder_units = build_units(list(reversed(dimensions)))
+        decoder_units[-1].add_module('activation', nn.Softplus())
+        # unit = [('activation', nn.Softplus())]
+        # decoder_units.append(nn.Sequential(OrderedDict(unit)))
         self.decoder = nn.Sequential(*decoder_units)
 
     def forward(self, inp):
@@ -120,7 +122,7 @@ class sdae(nn.Module):
 
 def train_ae(dataset: Dataset, autoencoder: nn.Module, num_epoch):
     dataloader = DataLoader(dataset, batch_size=50, shuffle=True)
-    criterion = nn.CrossEntropyLoss()
+    criterion = nn.MSELoss()
     optimizer = optim.SGD(autoencoder.parameters(), lr=0.1, momentum=0.9)
     autoencoder.train()
 
@@ -133,9 +135,13 @@ def train_ae(dataset: Dataset, autoencoder: nn.Module, num_epoch):
             loss.backward()
             optimizer.step()
 
+        # log
+        print('epoch [{}/{}], loss:{:.4f}' 
+                .format(epoch + 1, num_epoch, loss.data.item()))
+
         
 def pretrain(dataset: Dataset, autoencoder: sdae, num_epoch):
-    current_dataset = TensorDataset(dataset.channel)
+    current_dataset = dataset.channel
     num_subae = len(autoencoder.dimensions)-1
     for i in range(num_subae):
         inp_dim = autoencoder.dimensions[i]
@@ -147,7 +153,7 @@ def pretrain(dataset: Dataset, autoencoder: sdae, num_epoch):
 
         sub_ae.copy_weights(encoder, decoder)
         if i < num_subae-1:
-            current_dataset = TensorDataset(encode(current_dataset, sub_ae))
+            current_dataset = encode(current_dataset, sub_ae)
 
 
 def encode(dataset: Dataset, autoencoder):
@@ -167,7 +173,7 @@ def encode(dataset: Dataset, autoencoder):
 
 
 def fine_tune(dataset: Dataset, autoencoder: sdae, num_epoch):
-    model = sdae_lr(sdae)
+    model = sdae_lr(autoencoder)
     dataloader = DataLoader(dataset, batch_size=50, shuffle=True)
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.SGD(model.parameters(), lr=0.1, momentum=0.9)
@@ -182,14 +188,18 @@ def fine_tune(dataset: Dataset, autoencoder: sdae, num_epoch):
             loss.backward()
             optimizer.step()
 
+        # log
+        print('epoch [{}/{}], loss:{:.4f}' 
+                .format(epoch + 1, num_epoch, loss.data.item()))
+
 
 class sdae_lr(nn.Module):
     ''' sdae + logistic regression '''
 
-    def __init__(self, sdae: sdae):
+    def __init__(self, autoencoder: sdae):
         super(sdae_lr, self).__init__()
-        self.hidden = sdae.encoder
-        self.hidden.add_module('activation', nn.Sigmoid())
+        self.hidden = autoencoder.encoder
+        self.hidden[-1].add_module('activation', nn.Sigmoid())
 
 
     def forward(self, inp):

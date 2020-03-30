@@ -11,7 +11,7 @@ class FolioDataset(Dataset):
         # normalize
         self.location = torch.FloatTensor(normalize(location, axis=0, norm='max'))
         self.channel = torch.FloatTensor(normalize(channel, axis=0, norm='max'))
-        self.grdtruth = torch.FloatTensor(grdtruth)
+        self.grdtruth = torch.LongTensor(grdtruth)
 
         self.location_head = location_head
         self.channel_head = channel_head
