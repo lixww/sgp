@@ -1,16 +1,19 @@
 import pandas as pd
 
 from sklearn.model_selection import ShuffleSplit
+from sklearn.linear_model import LogisticRegression
+from sklearn import svm
+from sklearn.metrics import precision_score
 
 import torch
 from torch import optim
 from torch import nn
-from torch.utils.data import DataLoader, RandomSampler
+from torch.utils.data import DataLoader, random_split
 
 from torchvision import transforms
 
 import models 
-from utils import FolioDataset
+from utils import FolioDataset, cal_accuracy_given_pred
 
 
 
@@ -38,8 +41,10 @@ data_idx = training_file.index
 
 # load data
 full_dataset = FolioDataset(location, channel, y_true)
-# split into train & test?
-#
+# split into train & develop_set
+train_size = int(0.9 * len(full_dataset))
+dev_size = len(full_dataset) - train_size
+train_dataset, dev_dataset = random_split(full_dataset, [train_size, dev_size])
 
 
 # hyperparameter
@@ -66,15 +71,44 @@ finetune_epoch = 50
 
 
 autoencoder = models.sdae(
-    dimensions=[len(channel_head), 250, 250, 1000, 3]
+    dimensions=[len(channel_head), 10, 10, 20, 3]
 )
+print('Pretraining..')
 models.pretrain(
-    dataset=full_dataset,
+    dataset=train_dataset,
     autoencoder=autoencoder,
     num_epoch=pretrain_epoch
 )
-models.fine_tune(
-    dataset=full_dataset,
+print('Fine Tuning..')
+model = models.fine_tune(
+    dataset=train_dataset,
     autoencoder=autoencoder,
-    num_epoch=finetune_epoch
+    num_epoch=finetune_epoch,
+    validation=dev_dataset,
+    train_encoder_more=True
 )
+print('SVM')
+classifier = svm.SVC(decision_function_shape='ovo')
+model.eval()
+features = models.encode(train_dataset, model)
+grdtruth = []
+with torch.no_grad():
+    dataloader = DataLoader(train_dataset, batch_size=1000, shuffle=False)
+    for data in dataloader:
+        truth = data[2]
+        if len(grdtruth) <= 0:
+            grdtruth = truth
+            continue
+        grdtruth = torch.cat((grdtruth, truth))
+    grdtruth = grdtruth.numpy()
+prediction = classifier.fit(features, grdtruth)
+precision_clf = classifier.score(features, grdtruth)
+print('accuracy: ', precision_clf)
+
+def print_acc(model, dataset, print_note=''):
+    acc = models.cal_accuracy(dataset, model)
+
+    print(print_note, 'accuracy: ', acc)
+
+print_acc(model, train_dataset, print_note='train')
+print_acc(model, dev_dataset, print_note='validat')

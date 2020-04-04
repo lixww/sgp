@@ -2,6 +2,7 @@ import torch
 from torch.utils.data import Dataset
 
 from sklearn.preprocessing import normalize
+from sklearn.metrics import precision_score
 
 
 
@@ -24,3 +25,10 @@ class FolioDataset(Dataset):
 
     def __len__(self):
         return len(self.grdtruth)
+
+
+
+def cal_accuracy_given_pred(prediction, truth):
+    precision = precision_score(truth, prediction, average='micro')
+
+    return precision
