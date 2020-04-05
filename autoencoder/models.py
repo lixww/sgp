@@ -67,11 +67,11 @@ class dae(nn.Module):
         super(dae, self).__init__()
         self.encoder = nn.Sequential(OrderedDict([
             ('linear', nn.Linear(inp_dim, hid_dim)), 
-            ('activation', nn.ReLU())
+            ('activation', nn.SELU())
         ]))
         self.decoder = nn.Sequential(OrderedDict([
-            ('linear', nn.Linear(hid_dim, inp_dim)), 
-            ('activation', nn.Softplus())
+            ('linear', nn.Linear(hid_dim, inp_dim))
+            # ('activation', nn.SELU())
         ]))
 
     def forward(self, x):
@@ -93,7 +93,7 @@ def build_units(dimensions):
         outp_dim = dimensions[i+1]
         unit = [('linear', nn.Linear(inp_dim, outp_dim))]
         if outp_dim != dimensions[-1]:
-            unit.append(('activation', nn.ReLU()))
+            unit.append(('activation', nn.SELU()))
         units.append(nn.Sequential(OrderedDict(unit)))
 
     return units
@@ -108,7 +108,7 @@ class sdae(nn.Module):
         encoder_units = build_units(dimensions)
         self.encoder = nn.Sequential(*encoder_units)
         decoder_units = build_units(list(reversed(dimensions)))
-        decoder_units[-1].add_module('activation', nn.Softplus())
+        decoder_units[-1].add_module('activation', nn.CELU())
         # unit = [('activation', nn.Softplus())]
         # decoder_units.append(nn.Sequential(OrderedDict(unit)))
         self.decoder = nn.Sequential(*decoder_units)
@@ -224,7 +224,7 @@ class sdae_lr(nn.Module):
     def __init__(self, autoencoder: sdae):
         super(sdae_lr, self).__init__()
         self.hidden = autoencoder.encoder
-        # self.hidden[-1].add_module('activation', nn.Sigmoid())
+        # self.hidden[-1].add_module('activation', nn.Softmax())
 
 
     def forward(self, inp):

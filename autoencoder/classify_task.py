@@ -66,8 +66,8 @@ num_epoch = 50
 # sdae-lr
 
 # hyperparameter
-pretrain_epoch = 30
-finetune_epoch = 50
+pretrain_epoch = 40
+finetune_epoch = 60
 
 
 autoencoder = models.sdae(
