@@ -24,7 +24,6 @@ data_path = 'autoencoder/data/sgp'
 model_path = 'autoencoder/model'
 
 
-
 # prepare training set
 
 training_file = pd.read_csv(f'{data_path}/training_file_8_bit.csv')
@@ -88,7 +87,7 @@ model = models.fine_tune(
     train_encoder_more=True
 )
 print('SVM')
-classifier = svm.SVC(decision_function_shape='ovo')
+classifier = svm.SVC(decision_function_shape='ovo', gamma='auto')
 model.eval()
 features = models.encode(train_dataset, model)
 grdtruth = []
@@ -112,3 +111,6 @@ def print_acc(model, dataset, print_note=''):
 
 print_acc(model, train_dataset, print_note='train')
 print_acc(model, dev_dataset, print_note='validat')
+
+# save model
+torch.save(model.state_dict(), f'{model_path}/ae_on_{data_class}.pth')

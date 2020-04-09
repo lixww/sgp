@@ -10,7 +10,7 @@ class FolioDataset(Dataset):
     def __init__(self, location, channel, grdtruth, 
                  location_head=None, channel_head=None):
         # normalize
-        self.location = torch.FloatTensor(normalize(location, axis=0, norm='max'))
+        self.location = torch.FloatTensor(location)
         self.channel = torch.FloatTensor(normalize(channel, axis=0, norm='max'))
         self.grdtruth = torch.LongTensor(grdtruth)
 

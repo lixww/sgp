@@ -260,3 +260,23 @@ def cal_accuracy(dataset: Dataset, model):
 
     return precision
 
+
+def predict_class(dataset: Dataset, model):
+    dataloader = DataLoader(dataset, batch_size=1000, shuffle=False)
+    pred_res = []
+    with torch.no_grad():
+        for data in dataloader:
+            inp = data[1]
+            if hasattr(model, 'encoder'):
+                output = model.encoder(inp)
+            else:
+                output = model(inp)
+            _, prediction = torch.max(output.data, 1)
+
+            loc = data[0]
+            if len(pred_res) <= 0:
+                pred_res = prediction
+                continue
+            pred_res = torch.cat((pred_res, prediction))
+            
+    return pred_res
