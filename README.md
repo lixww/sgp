@@ -7,7 +7,7 @@ Pytorch 1.4.0
 <br />
 
 
-### Results preview
+### Results preview (on cropped Tiff)
 Original image of 024r_029v and its enhanced image:
 <br />
 <img src='/results_preview/024r_029v_orig.png' width='150'>
