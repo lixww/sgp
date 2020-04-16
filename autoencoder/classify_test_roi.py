@@ -14,7 +14,7 @@ from utils import FolioDataset
 
 
 data_class = 'allClass'
-data_id = '102v_107r'
+data_id = '024r_029v'
 data_type = 'cropped_roi'
 
 img_width, img_height = (699, 684)
@@ -70,5 +70,5 @@ for h in range(img_height):
     for w in range(img_width):
         index = (img_width)*h + w
         if predictions[index] == 2:
-            sample_img[h][w] = 10
+            sample_img[h][w] -= 20
 imsave(f'{img_save_path}/{data_id}.tif', sample_img)
