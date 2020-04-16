@@ -17,7 +17,7 @@ Original image of 024r_029v and its enhanced image:
 Original image of 102v_107r and its enhanced image:
 <br />
 <img src='/results_preview/102v_107r_orig.png' width='150'>
-<img src='/results_preview/102v_107r_enh.png' width='150'>
+<img src='/results_preview/102v_107r_enh_lighter.png' width='150'>
 <br />
 
 Original image of 214v_221r and its enhanced image:
