@@ -175,9 +175,9 @@ mnist_output/
 reconstructed_*/
 
 # images
-*.jpg
-*.png
-*.tif
+autoencoder/*.jpg
+autoencoder/*.png
+autoencoder/*.tif
 
 # model files
 model/
