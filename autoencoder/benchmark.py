@@ -9,7 +9,7 @@ from skimage.io import imread_collection
 
 
 
-data_id = '214v_221r'
+data_id = '024r_029v'
 data_type = 'cropped_roi'
 
 img_width, img_height = (699, 684)
@@ -74,4 +74,6 @@ for h in range(img_height):
         index = (img_width)*h + w
         if predictions[index] == 2:
             sample_img[h][w] -= 20
+        else:
+            sample_img[h][w] += 20
 imsave(f'{img_save_path}/{data_id}_lda.tif', sample_img)
