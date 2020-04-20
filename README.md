@@ -18,7 +18,7 @@ Original image of 024r_029v, its enhanced image, LDA version:
 Original image of 102v_107r, its enhanced image, LDA version:
 <br />
 <img src='/results_preview/102v_107r_orig.png' width='150'>
-<img src='/results_preview/102v_107r_enh_lighter.png' width='150'>
+<img src='/results_preview/102v_107r_enh.png' width='150'>
 <img src='/results_preview/102v_107r_lda.png' width='150'>
 <br />
 
