@@ -8,21 +8,21 @@ Pytorch 1.4.0
 
 
 ### Results preview (on cropped Tiff)
-Original image of 024r_029v, AE-enhanced version, LDA version:
+Original image of 024r_029v, NN-enhanced version, LDA version:
 <br />
 <img src='/results_preview/024r_029v_orig.png' width='150'>
 <img src='/results_preview/024r_029v_enh.png' width='150'>
 <img src='/results_preview/024r_029v_lda.png' width='150'>
 <br />
 
-Original image of 102v_107r, AE-enhanced version, LDA version:
+Original image of 102v_107r, NN-enhanced version, LDA version:
 <br />
 <img src='/results_preview/102v_107r_orig.png' width='150'>
 <img src='/results_preview/102v_107r_enh.png' width='150'>
 <img src='/results_preview/102v_107r_lda.png' width='150'>
 <br />
 
-Original image of 214v_221r, AE-enhanced version, LDA version:
+Original image of 214v_221r, NN-enhanced version, LDA version:
 <br />
 <img src='/results_preview/214v_221r_orig.png' width='150'>
 <img src='/results_preview/214v_221r_enh.png' width='150'>
