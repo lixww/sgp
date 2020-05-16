@@ -1,7 +1,7 @@
 from collections import OrderedDict
 
 from sklearn.model_selection import ShuffleSplit
-from sklearn.metrics import precision_score
+from sklearn.metrics import precision_score, roc_curve, auc
 
 import torch
 from torch import nn
@@ -259,6 +259,35 @@ def cal_accuracy(dataset: Dataset, model):
     self_cal_acc = correct.item()/len(pred_res)
 
     return precision
+
+
+def get_roc(dataset: Dataset, model):
+    dataloader = DataLoader(dataset, batch_size=1000, shuffle=False)
+    correct = 0
+    pred_res = []
+    grd_truth = []
+    with torch.no_grad():
+        for data in dataloader:
+            inp = data[1]
+            truth = data[2]
+            if hasattr(model, 'encoder'):
+                output = model.encoder(inp)
+            else:
+                output = model(inp)
+            _, prediction = torch.max(output.data, 1)
+            correct += (prediction == truth).sum()
+            #
+            if len(pred_res) <= 0:
+                pred_res = prediction
+                grd_truth = truth
+                continue
+            pred_res = torch.cat((pred_res, prediction))
+            grd_truth = torch.cat((grd_truth, truth))
+
+    fpr, tpr, _ = roc_curve(grd_truth.numpy(), pred_res.numpy(), pos_label=2)
+    roc_auc = auc(fpr, tpr)
+
+    return fpr, tpr, roc_auc
 
 
 def predict_class(dataset: Dataset, model):

@@ -4,6 +4,8 @@ from torch.utils.data import Dataset
 from sklearn.preprocessing import normalize
 from sklearn.metrics import precision_score
 
+import matplotlib.pyplot as plt
+
 
 
 class FolioDataset(Dataset):
@@ -32,3 +34,27 @@ def cal_accuracy_given_pred(prediction, truth):
     precision = precision_score(truth, prediction, average='micro')
 
     return precision
+
+
+
+def plot_roc(fpr:list, tpr:list, roc_area:list):
+    plt.figure()
+    lw = 2
+    colors = ['darkorange', 'green']
+    notes = ['train', 'validat']
+    for i in range(len(colors)):
+        f = fpr[i]
+        t = tpr[i]
+        auc = roc_area[i]
+        c = colors[i]
+        n = notes[i]
+        plt.plot(f, t, color=c,
+            lw=lw, label=n+' - ROC curve (area = %0.2f)' % auc)
+    plt.plot([0, 1], [0, 1], color='navy', lw=lw, linestyle='--')
+    plt.xlim([0.0, 1.0])
+    plt.ylim([0.0, 1.05])
+    plt.xlabel('False Positive Rate')
+    plt.ylabel('True Positive Rate')
+    plt.title('Receiver operating characteristic example')
+    plt.legend(loc="lower right")
+    plt.show()

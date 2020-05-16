@@ -13,7 +13,7 @@ from torch.utils.data import DataLoader, random_split
 from torchvision import transforms
 
 import models 
-from utils import FolioDataset, cal_accuracy_given_pred
+from utils import FolioDataset, cal_accuracy_given_pred, plot_roc
 
 
 
@@ -106,11 +106,15 @@ print('accuracy: ', precision_clf)
 
 def print_acc(model, dataset, print_note=''):
     acc = models.cal_accuracy(dataset, model)
-
     print(print_note, 'accuracy: ', acc)
 
+print('Network')
 print_acc(model, train_dataset, print_note='train')
 print_acc(model, dev_dataset, print_note='validat')
+# plot roc
+fpr_train, tpr_train, rocauc_train = models.get_roc(train_dataset, model)
+fpr_dev, tpr_dev, rocauc_dev = models.get_roc(dev_dataset, model)
+plot_roc([fpr_train, fpr_dev], [tpr_train, tpr_dev], [rocauc_train, rocauc_dev])
 
 # save model
 torch.save(model.state_dict(), f'{model_path}/ae_on_{data_class}.pth')
