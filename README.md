@@ -33,12 +33,12 @@ Original image of 214v_221r, NN-enhanced version, LDA version:
 ### Network Reference
 Denoise Autoencoder [[1]](#xing2015stacked)
 <br />
-<img src='/figs/networks/dae.png' width='150'>
+<img src='/figs/networks/dae.png' width='360'>
 <br />
 
 Stacked Denoise Autoencoder [[1]](#xing2015stacked)
 <br />
-<img src='/figs/networks/sdae.png' width='150'>
+<img src='/figs/networks/sdae.png' width='900'>
 <br />
 
 
