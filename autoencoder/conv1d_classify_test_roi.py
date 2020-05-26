@@ -38,11 +38,8 @@ for f in ic.files:
 
 # load model
 print('Load model..')
-autoencoder = models.sdae(
-    dimensions=[channel_len, 10, 10, 20, 3]
-)
-model = models.sdae_lr(autoencoder)
-model.load_state_dict(torch.load(f'{model_path}/ae_on_{data_class}.pth', map_location='cpu'))
+model = models.conv1d_net(channel_len, 3)
+model.load_state_dict(torch.load(f'{model_path}/conv1d_on_{data_class}.pth', map_location='cpu'))
 model.eval()
 
 
@@ -70,7 +67,7 @@ for h in range(img_height):
     for w in range(img_width):
         index = (img_width)*h + w
         if predictions[index] == 2:
-            sample_img[h][w] -= 20
+            sample_img[h][w] -= 50
         else:
             sample_img[h][w] += 20
-imsave(f'{img_save_path}/{data_id}.tif', sample_img)
+imsave(f'{img_save_path}/{data_id}_conv1d.tif', sample_img)

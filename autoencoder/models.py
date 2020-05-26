@@ -231,6 +231,81 @@ class sdae_lr(nn.Module):
         return self.hidden(inp)
 
 
+class conv2d_net(nn.Module):
+    ''' 2d conv on pixels '''
+
+    def __init__(self, input_dim, input_w, input_h, output_dim):
+        super(conv2d_net, self).__init__()
+        self.inp_w = input_w
+        self.inp_h = input_h
+        kernel_size = 17
+        kernel_num = (20,)
+        self.conv = nn.Sequential(
+            nn.Conv2d(1, kernel_num[0], 
+                        kernel_size=kernel_size, 
+                        stride=1),
+            nn.ReLU(),
+            # nn.Conv2d(kernel_num[0], kernel_num[1], 
+            #             kernel_size=kernel_size, 
+            #             stride=1, 
+            #             padding=int((kernel_size-1)*0.5)),
+            # nn.ReLU(),
+        )
+        fc_inp_dim = input_dim * kernel_num[0]
+        self.fc_inp_dim = fc_inp_dim
+        self.fc = nn.Sequential(
+            nn.Linear(fc_inp_dim, 100),
+            nn.ReLU(),
+            nn.Linear(100, 10),
+            nn.ReLU()
+        )
+        self.out_layer = nn.Linear(10, output_dim)
+
+    
+    def forward(self, inp):
+        inp = torch.reshape(inp, (-1, 1, self.inp_h, self.inp_w))
+        conv_out = self.conv(inp)
+        conv_n, conv_c, _, _ = conv_out.shape
+        conv_out = torch.reshape(conv_out, (1,)+conv_out.shape)
+        conv_out = nn.functional.interpolate(conv_out, size=(conv_c, self.inp_h, self.inp_w))
+        conv_out = torch.reshape(conv_out, (self.fc_inp_dim, -1))
+        conv_out = conv_out.T
+        fc_out = self.fc(conv_out)
+        out = self.out_layer(fc_out)
+        return out
+
+
+class conv1d_net(nn.Module):
+    ''' 1d conv on channels '''
+
+    def __init__(self, input_dim, output_dim):
+        super(conv1d_net, self).__init__()
+        self.inp_dim = input_dim
+        kernel_size = 7
+        kernel_num = 20
+        
+        self.conv = nn.Sequential(
+            nn.Conv1d(1, kernel_num, kernel_size=kernel_size, stride=1),
+            nn.ReLU()
+        )
+        fc_inp_dim = (input_dim - kernel_size + 1) * kernel_num
+        self.fc_inp_dim = fc_inp_dim
+        self.fc = nn.Sequential(
+            nn.Linear(fc_inp_dim, 100),
+            nn.ReLU()
+        )
+        self.out_layer = nn.Linear(100, output_dim)
+
+
+    def forward(self, inp):
+        inp = torch.reshape(inp, (-1, 1, self.inp_dim))
+        conv_out = self.conv(inp)
+        conv_out = torch.reshape(conv_out, (-1, self.fc_inp_dim))
+        fc_out = self.fc(conv_out)
+        out = self.out_layer(fc_out)
+        return out
+
+
 def cal_accuracy(dataset: Dataset, model):
     dataloader = DataLoader(dataset, batch_size=1000, shuffle=False)
     correct = 0
