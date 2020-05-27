@@ -238,7 +238,7 @@ class conv2d_net(nn.Module):
         super(conv2d_net, self).__init__()
         self.inp_w = input_w
         self.inp_h = input_h
-        kernel_size = 17
+        kernel_size = 5
         kernel_num = (20,)
         self.conv = nn.Sequential(
             nn.Conv2d(1, kernel_num[0], 
@@ -265,9 +265,43 @@ class conv2d_net(nn.Module):
     def forward(self, inp):
         inp = torch.reshape(inp, (-1, 1, self.inp_h, self.inp_w))
         conv_out = self.conv(inp)
-        conv_n, conv_c, _, _ = conv_out.shape
+        _, conv_c, _, _ = conv_out.shape
         conv_out = torch.reshape(conv_out, (1,)+conv_out.shape)
         conv_out = nn.functional.interpolate(conv_out, size=(conv_c, self.inp_h, self.inp_w))
+        conv_out = torch.reshape(conv_out, (self.fc_inp_dim, -1))
+        conv_out = conv_out.T
+        fc_out = self.fc(conv_out)
+        out = self.out_layer(fc_out)
+        return out
+
+
+class conv3d_net(nn.Module):
+    ''' 3d conv '''
+
+    def __init__(self, input_dim, input_w, input_h, output_dim):
+        super(conv3d_net, self).__init__()
+        self.inp_w = input_w
+        self.inp_h = input_h
+        kernel_size = 7
+        kernel_num = 20
+
+        self.conv = nn.Sequential(
+            nn.Conv3d(1, kernel_num, kernel_size=kernel_size, stride=1),
+            nn.ReLU()
+        )
+        fc_inp_dim = kernel_num * (input_dim - kernel_size + 1)
+        self.fc_inp_dim = fc_inp_dim
+        self.fc = nn.Sequential(
+            nn.Linear(fc_inp_dim, 100),
+            nn.ReLU()
+        )
+        self.out_layer = nn.Linear(100, output_dim)
+
+    def forward(self, inp):
+        inp = torch.reshape(inp, (1, 1, -1, self.inp_h, self.inp_w))
+        conv_out = self.conv(inp)
+        _, _, conv_d, _, _ = conv_out.shape
+        conv_out = nn.functional.interpolate(conv_out, size=(conv_d, self.inp_h, self.inp_w))
         conv_out = torch.reshape(conv_out, (self.fc_inp_dim, -1))
         conv_out = conv_out.T
         fc_out = self.fc(conv_out)

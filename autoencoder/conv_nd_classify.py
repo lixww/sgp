@@ -5,6 +5,8 @@ from skimage.io import imread_collection
 from skimage.io import imread, imsave
 from skimage.transform import rescale
 
+from sklearn.metrics import precision_score
+
 import torch
 from torch.utils.data import DataLoader
 from torch import nn
@@ -88,14 +90,14 @@ print('Train conv net..')
 num_epochs = 2000
 learning_rate = 0.01
 
-conv_model = models.conv2d_net(channel_len, img_width, img_height, 3)
+conv_model = models.conv3d_net(channel_len, img_width, img_height, 3)
 criterion = nn.CrossEntropyLoss()
 optimizer = optim.SGD(conv_model.parameters(), lr=learning_rate, momentum=0.9)
 conv_model.train()
 
 for epoch in range(num_epochs):
     output = conv_model(torch.FloatTensor(imgs_norm))
-    # _, output = torch.max(output.data, 1)
+    _, conv_pred = torch.max(output.data, 1)
     loss = criterion(output, ae_pred)
 
     optimizer.zero_grad()
@@ -104,8 +106,9 @@ for epoch in range(num_epochs):
 
     # log
     if epoch % 10 == 0:
-        print('epoch [{}/{}], loss:{:.4f}' 
-                .format(epoch + 1, num_epochs, loss.data.item()))
+        acc = precision_score(ae_pred, conv_pred, average='micro')
+        print('epoch [{}/{}], loss:{:.4f}, accuracy:{:.4f}' 
+                .format(epoch + 1, num_epochs, loss.data.item(), acc))
 
 
 # save model
