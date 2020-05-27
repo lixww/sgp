@@ -15,12 +15,13 @@ from torch import optim
 from sklearn.preprocessing import normalize
 
 import models
-from utils import FolioDataset
+from utils import FolioDataset, load_images_data, load_raw_images_data
+from utils import reconstruct_image
 
 
 
 data_class = 'allClass'
-data_id = '102v_107r'
+data_id = '024r_029v'
 data_type = 'cropped_roi'
 
 img_width, img_height = (699, 684)
@@ -36,14 +37,10 @@ print('Load training data..')
 
 # load images
 print('-load images..')
-ic = imread_collection(data_path)
-imgs_norm = []
-imgs = []
-for f in ic.files:
-    image = imread(f, as_gray=True)
-    imgs_norm.append(rescale(image, 0.25, anti_aliasing=False))
-    imgs.append(rescale(image, 0.25, anti_aliasing=False, preserve_range=True))
-img_height, img_width = imgs_norm[0].shape
+
+imgs_norm = load_raw_images_data(data_path, rescale_ratio=0.25)
+test_dataset, sample_img = load_images_data(data_path, rescale_ratio=0.25)
+img_height, img_width = sample_img.shape
 
 
 channel_len = 23
@@ -59,20 +56,6 @@ ae_model = models.sdae_lr(autoencoder)
 ae_model.load_state_dict(torch.load(f'{model_path}/ae_on_{data_class}.pth', map_location='cpu'))
 ae_model.eval()
 
-# prepare images
-print('-prepare images..')
-channel = []
-location = []
-y_true = [-1] * pxl_num
-for h in range(img_height):
-    for w in range(img_width):
-        data = []
-        for i in range(channel_len):
-            data.append(imgs[i][h][w])
-        channel.append(data)
-        location.append((w+1, h+1))
-
-test_dataset = FolioDataset(location, channel, y_true)
 
 # predict labels
 print('-predict labels..')
@@ -87,7 +70,7 @@ ae_pred_norm = torch.FloatTensor(normalize(torch.reshape(ae_pred,(1,-1)), norm='
 # conv model
 print('Train conv net..')
 
-num_epochs = 2000
+num_epochs = 100
 learning_rate = 0.01
 
 conv_model = models.conv3d_net(channel_len, img_width, img_height, 3)
@@ -123,33 +106,9 @@ with torch.no_grad():
     print('-max in conv_pred: ', torch.max(conv_pred.data).item())
     print('-min in conv_pred: ', torch.min(conv_pred.data).item())
 
-sample_img_conv = imgs[0]
-sample_img_ae = imgs[0]
-imsave(f'{img_save_path}/{data_id}_orig.png', imgs[0])
-tmp_count_conv_2 = 0
-tmp_count_conv_01 = 0
-tmp_count_ae_2 = 0
-tmp_count_ae_01 = 0
-for h in range(img_height):
-    for w in range(img_width):
-        index = (img_width)*h + w
-        if conv_pred[index] == 2:
-            sample_img_conv[h][w] -= 20
-            tmp_count_conv_2 += 1
-        else:
-            sample_img_conv[h][w] += 20
-            tmp_count_conv_01 += 1
-        if ae_pred[index] == 2:
-            # sample_img_ae[h][w] -= 20
-            tmp_count_ae_2 += 1
-        else:
-            # sample_img_ae[h][w] += 20
-            tmp_count_ae_01 += 1
-imsave(f'{img_save_path}/{data_id}_conv.png', sample_img_conv)
-imsave(f'{img_save_path}/{data_id}_ae.png', sample_img_ae)
 
-print('tmp_count_conv_2 = ', tmp_count_conv_2)
-print('tmp_count_conv_01 = ', tmp_count_conv_01)
-print('tmp_count_ae_2 = ', tmp_count_ae_2)
-print('tmp_count_ae_01 = ', tmp_count_ae_01)
+imsave(f'{img_save_path}/{data_id}_orig.png', sample_img)
+
+sample_img_conv = reconstruct_image(sample_img, conv_pred, count_note=True)
+imsave(f'{img_save_path}/{data_id}_conv.png', sample_img_conv)
 

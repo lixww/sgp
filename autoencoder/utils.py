@@ -3,6 +3,10 @@ import pandas as pd
 import torch
 from torch.utils.data import Dataset, random_split
 
+from skimage.io import imread_collection
+from skimage.io import imread
+from skimage.transform import rescale
+
 from sklearn.preprocessing import normalize
 from sklearn.metrics import precision_score
 
@@ -78,6 +82,67 @@ def load_raw_labeled_data(folder_path='autoencoder/data/sgp'):
     return channel, y_true, channel_len
 
 
+def load_images_data(data_path, rescale_ratio=1):
+    ic = imread_collection(data_path)
+    imgs = []
+    for f in ic.files:
+        image = imread(f, as_gray=True)
+        if rescale_ratio != 1:
+            image = rescale(image, rescale_ratio, anti_aliasing=False, preserve_range=True)
+        imgs.append(image)    
+
+    sample_img = imgs[0]
+    img_height, img_width = imgs[0].shape
+    pxl_num = img_height * img_width
+    channel_len = len(imgs)
+
+    # prepare dataset
+    channel = []
+    location = []
+    y_true = [-1] * pxl_num
+    for h in range(img_height):
+        for w in range(img_width):
+            data = []
+            for i in range(channel_len):
+                data.append(imgs[i][h][w])
+            channel.append(data)
+            location.append((w+1, h+1))
+
+    test_dataset = FolioDataset(location, channel, y_true)
+
+    return test_dataset, sample_img
+
+
+def load_raw_images_data(data_path, rescale_ratio=1, preserve_range_after_rescale=False):
+    ic = imread_collection(data_path)
+    imgs = []
+    for f in ic.files:
+        image = imread(f, as_gray=True)
+        if rescale_ratio != 1:
+            image = rescale(image, rescale_ratio, 
+                            anti_aliasing=False, 
+                            preserve_range=preserve_range_after_rescale)
+        imgs.append(image)  
+
+    return imgs
+
+
+def flatten_images(imgs):
+    img_height, img_width = imgs[0].shape
+    channel_len = len(imgs)
+    intensities = []
+    locations = []
+    for h in range(img_height):
+        for w in range(img_width):
+            data = []
+            for i in range(channel_len):
+                data.append(imgs[i][h][w])
+            intensities.append(data)
+            locations.append((w+1, h+1))
+
+    return intensities, locations
+
+
 def cal_accuracy_given_pred(prediction, truth):
     precision = precision_score(truth, prediction, average='micro')
 
@@ -106,3 +171,25 @@ def plot_roc(fpr:list, tpr:list, roc_area:list):
     plt.title('Receiver operating characteristic example')
     plt.legend(loc="lower right")
     plt.show()
+
+
+
+def reconstruct_image(image, pxl_labels, enhance_intensity=20, count_note=False):
+    img_height, img_width = image.shape
+    count_2 = 0
+    count_01 = 0
+    for h in range(img_height):
+        for w in range(img_width):
+            index = (img_width)*h + w
+            if pxl_labels[index] == 2:
+                image[h][w] -= enhance_intensity
+                count_2 += 1
+            else:
+                image[h][w] += enhance_intensity
+                count_01 += 1
+
+    if count_note:
+        print('count_2 = ', count_2)
+        print('count_01 = ', count_01)
+
+    return image

@@ -7,6 +7,7 @@ from skimage.io import imread, imsave
 from skimage.io import imread_collection
 
 from utils import load_raw_labeled_data
+from utils import load_raw_images_data, flatten_images, reconstruct_image
 
 
 
@@ -38,21 +39,8 @@ print('train-accuracy: ', precision_clf)
 
 # prepare test data
 print('Prepare test data..')
-ic = imread_collection(test_data_path)
-imgs = []
-for f in ic.files:
-    imgs.append(imread(f, as_gray=True))
-
-channel_test = []
-location_test = []
-for h in range(img_height):
-    for w in range(img_width):
-        data = []
-        for i in range(channel_len):
-            data.append(imgs[i][h][w])
-        channel_test.append(data)
-        location_test.append((w+1, h+1))
-
+imgs = load_raw_images_data(test_data_path)
+channel_test, _ = flatten_images(imgs)
 
 print('Model predict..')
 predictions = classifier.predict(channel_test)
@@ -60,11 +48,5 @@ predictions = classifier.predict(channel_test)
 
 print('Reconstruct..')
 sample_img = imgs[0]
-for h in range(img_height):
-    for w in range(img_width):
-        index = (img_width)*h + w
-        if predictions[index] == 2:
-            sample_img[h][w] -= 20
-        else:
-            sample_img[h][w] += 20
+sample_img = reconstruct_image(sample_img, predictions)
 imsave(f'{img_save_path}/{data_id}_lda.tif', sample_img)

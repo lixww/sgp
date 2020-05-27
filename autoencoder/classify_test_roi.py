@@ -9,7 +9,7 @@ from torch.utils.data import DataLoader
 from torch import nn
 
 import models
-from utils import FolioDataset
+from utils import FolioDataset, load_images_data, reconstruct_image
 
 
 
@@ -30,11 +30,9 @@ pxl_num = img_width * img_height
 
 # load test data
 print('Load test data..')
-ic = imread_collection(data_path)
-imgs = []
-for f in ic.files:
-    imgs.append(imread(f, as_gray=True))
 
+test_dataset, sample_img = load_images_data(data_path)
+img_height, img_width = sample_img.shape
 
 # load model
 print('Load model..')
@@ -46,31 +44,10 @@ model.load_state_dict(torch.load(f'{model_path}/ae_on_{data_class}.pth', map_loc
 model.eval()
 
 
-print('Prepare dataset..')
-channel = []
-location = []
-y_true = [-1] * pxl_num
-for h in range(img_height):
-    for w in range(img_width):
-        data = []
-        for i in range(channel_len):
-            data.append(imgs[i][h][w])
-        channel.append(data)
-        location.append((w+1, h+1))
-
-test_dataset = FolioDataset(location, channel, y_true)
-
 print('Model predict..')
 predictions = models.predict_class(test_dataset, model)
 
 
 print('Reconstruct..')
-sample_img = imgs[0]
-for h in range(img_height):
-    for w in range(img_width):
-        index = (img_width)*h + w
-        if predictions[index] == 2:
-            sample_img[h][w] -= 20
-        else:
-            sample_img[h][w] += 20
+sample_img = reconstruct_image(sample_img, predictions)
 imsave(f'{img_save_path}/{data_id}.tif', sample_img)
