@@ -1,8 +1,7 @@
 import pandas as pd
 import numpy as np
 
-from skimage.io import imread_collection
-from skimage.io import imread, imsave
+from skimage.io import imsave
 
 import torch
 from torch.utils.data import DataLoader
@@ -14,7 +13,7 @@ from utils import FolioDataset, load_images_data, reconstruct_image
 
 
 data_class = 'allClass'
-data_id = '102v_107r'
+data_id = '214v_221r'
 data_type = 'cropped_roi'
 
 img_width, img_height = (699, 684)

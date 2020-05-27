@@ -3,24 +3,21 @@ import numpy as np
 
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis as lda
 
-from skimage.io import imread, imsave
-from skimage.io import imread_collection
+from skimage.io import imsave
 
 from utils import load_raw_labeled_data
 from utils import load_raw_images_data, flatten_images, reconstruct_image
 
 
 
-data_id = '024r_029v'
+data_id = '214v_221r'
 data_type = 'cropped_roi'
 
-img_width, img_height = (699, 684)
 
 # file paths
 test_data_path = f'autoencoder/data/sgp/{data_id}/cropped_roi/*'
 img_save_path = 'autoencoder/reconstructed_roi'
 
-pxl_num = img_width * img_height
 
 
 # prepare training set

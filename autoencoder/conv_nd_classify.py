@@ -1,8 +1,7 @@
 import pandas as pd
 import numpy as np
 
-from skimage.io import imread_collection
-from skimage.io import imread, imsave
+from skimage.io import imsave
 from skimage.transform import rescale
 
 from sklearn.metrics import precision_score
@@ -21,10 +20,9 @@ from utils import reconstruct_image
 
 
 data_class = 'allClass'
-data_id = '024r_029v'
+data_id = '214v_221r'
 data_type = 'cropped_roi'
 
-img_width, img_height = (699, 684)
 
 # file paths
 data_path = f'autoencoder/data/sgp/{data_id}/cropped_roi/*'
@@ -70,7 +68,7 @@ ae_pred_norm = torch.FloatTensor(normalize(torch.reshape(ae_pred,(1,-1)), norm='
 # conv model
 print('Train conv net..')
 
-num_epochs = 100
+num_epochs = 2000
 learning_rate = 0.01
 
 conv_model = models.conv3d_net(channel_len, img_width, img_height, 3)
