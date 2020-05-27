@@ -1,10 +1,13 @@
+import pandas as pd
+
 import torch
-from torch.utils.data import Dataset
+from torch.utils.data import Dataset, random_split
 
 from sklearn.preprocessing import normalize
 from sklearn.metrics import precision_score
 
 import matplotlib.pyplot as plt
+
 
 
 
@@ -28,6 +31,51 @@ class FolioDataset(Dataset):
     def __len__(self):
         return len(self.grdtruth)
 
+
+def load_labeled_dataset(folder_path='autoencoder/data/sgp'):
+    data_path = f'{folder_path}/training_file_8_bit.csv'
+    training_file = pd.read_csv(data_path)
+
+    location_head = training_file.columns[2:4]
+    channel_head = training_file.columns[4:]
+
+    y_true = training_file['class_name'].to_numpy()
+    location = training_file[location_head].to_numpy()
+    channel = training_file[channel_head].to_numpy()
+
+    data_idx = training_file.index
+
+    channel_len = len(channel_head)
+
+    # load data
+    full_dataset = FolioDataset(location, channel, y_true,
+                                location_head=location_head,
+                                channel_head=channel_head)
+
+    return full_dataset, channel_len, data_idx
+
+
+def split_dataset(full_dataset:Dataset, split_ratio=0.9):
+    # split into train & develop_set
+    train_size = int(split_ratio * len(full_dataset))
+    dev_size = len(full_dataset) - train_size
+    train_dataset, dev_dataset = random_split(full_dataset, [train_size, dev_size])
+
+    return train_dataset, dev_dataset
+
+
+def load_raw_labeled_data(folder_path='autoencoder/data/sgp'):
+    data_path = f'{folder_path}/training_file_8_bit.csv'
+    training_file = pd.read_csv(data_path)
+
+    channel_head = training_file.columns[4:]
+
+    y_true = training_file['class_name'].to_numpy()
+    channel = training_file[channel_head].to_numpy()
+
+    channel_len = len(channel_head)
+
+    return channel, y_true, channel_len
 
 
 def cal_accuracy_given_pred(prediction, truth):

@@ -8,39 +8,23 @@ from torch.utils.data import DataLoader
 from torch import nn
 
 import models
-from utils import FolioDataset
+from utils import FolioDataset, load_labeled_dataset
 
 
 
 data_class = 'allClass'
 
 # file paths
-data_path = 'autoencoder/data/sgp'
 model_path = 'autoencoder/model'
 
 
 # prepare test set
-
-test_file = pd.read_csv(f'{data_path}/training_file_8_bit.csv')
-
-location_head = test_file.columns[2:4]
-channel_head = test_file.columns[4:]
-
-y_true = test_file['class_name'].to_numpy()
-location = test_file[location_head].to_numpy()
-channel = test_file[channel_head].to_numpy()
-
-data_idx = test_file.index
-
-# load data
-test_dataset = FolioDataset(location, channel, y_true, 
-                            location_head=location_head,
-                            channel_head=channel_head)
+test_dataset, channel_len, _ = load_labeled_dataset()
 
 
 # load model
 autoencoder = models.sdae(
-    dimensions=[len(channel_head), 10, 10, 20, 3]
+    dimensions=[channel_len, 10, 10, 20, 3]
 )
 model = models.sdae_lr(autoencoder)
 model.load_state_dict(torch.load(f'{model_path}/ae_on_{data_class}.pth', map_location='cpu'))

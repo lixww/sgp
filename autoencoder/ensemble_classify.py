@@ -10,35 +10,20 @@ from torch import nn
 from sklearn.metrics import precision_score
 
 import models
-from utils import FolioDataset
+from utils import FolioDataset, load_labeled_dataset
 
 
 
 data_class = 'allClass'
 
 # file paths
-data_path = 'autoencoder/data/sgp'
 model_path = 'autoencoder/model'
 
 
 # prepare test set
 
-test_file = pd.read_csv(f'{data_path}/training_file_8_bit.csv')
+full_dataset, channel_len, _ = load_labeled_dataset()
 
-location_head = test_file.columns[2:4]
-channel_head = test_file.columns[4:]
-
-y_true = test_file['class_name'].to_numpy()
-location = test_file[location_head].to_numpy()
-channel = test_file[channel_head].to_numpy()
-
-data_idx = test_file.index
-
-# load data
-full_dataset = FolioDataset(location, channel, y_true)
-
-# load model
-channel_len = len(channel_head)
 
 autoencoder = models.sdae(
     dimensions=[channel_len, 10, 10, 20, 3]

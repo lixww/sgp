@@ -1,11 +1,12 @@
 import pandas as pd
 import numpy as np
 
-from sklearn.model_selection import ShuffleSplit
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis as lda
 
 from skimage.io import imread, imsave
 from skimage.io import imread_collection
+
+from utils import load_raw_labeled_data
 
 
 
@@ -15,26 +16,16 @@ data_type = 'cropped_roi'
 img_width, img_height = (699, 684)
 
 # file paths
-train_data_path = 'autoencoder/data/sgp'
 test_data_path = f'autoencoder/data/sgp/{data_id}/cropped_roi/*'
 img_save_path = 'autoencoder/reconstructed_roi'
 
-channel_len = 23
 pxl_num = img_width * img_height
 
 
 # prepare training set
 print('Prepare training data..')
-training_file = pd.read_csv(f'{train_data_path}/training_file_8_bit.csv')
 
-location_head = training_file.columns[2:4]
-channel_head = training_file.columns[4:]
-
-y_true = training_file['class_name'].to_numpy()
-location_train = training_file[location_head].to_numpy()
-channel_train = training_file[channel_head].to_numpy()
-
-data_idx = training_file.index
+channel_train, y_true, channel_len = load_raw_labeled_data()
 
 
 # fit lda

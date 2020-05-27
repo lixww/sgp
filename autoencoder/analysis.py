@@ -25,6 +25,8 @@ y_true = training_file['class_name'].to_numpy()
 
 data_idx = training_file.index
 
+channel_len = len(channel_head)
+
 
 # %%
 # plot locations
@@ -64,7 +66,7 @@ for i in data_idx:
         idx_u.append(i)
 
 
-x_axis = range(len(channel_head))
+x_axis = range(channel_len)
 
 plt.figure()
 
