@@ -10,7 +10,7 @@ from utils import load_raw_images_data, flatten_images, reconstruct_image
 
 
 
-data_id = '214v_221r'
+data_id = '102v_107r'
 data_type = 'cropped_roi'
 
 

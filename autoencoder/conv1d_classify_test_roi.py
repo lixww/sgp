@@ -13,7 +13,7 @@ from utils import FolioDataset, load_images_data, reconstruct_image
 
 
 data_class = 'allClass'
-data_id = '214v_221r'
+data_id = '102v_107r'
 data_type = 'cropped_roi'
 
 img_width, img_height = (699, 684)
@@ -45,5 +45,5 @@ predictions = models.predict_class(test_dataset, model)
 
 
 print('Reconstruct..')
-sample_img = reconstruct_image(sample_img, predictions, enhance_intensity=50)
+sample_img = reconstruct_image(sample_img, predictions, enhance_intensity=20)
 imsave(f'{img_save_path}/{data_id}_conv1d.tif', sample_img)

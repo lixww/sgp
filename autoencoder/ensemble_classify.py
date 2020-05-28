@@ -47,6 +47,6 @@ for prob in prob_ensemb:
     _, prediction = torch.max(prob.data, 0)
     pred_result.append(prediction.item())
 
-precision = precision_score(y_true, pred_result, average='micro')
+precision = precision_score(full_dataset.grdtruth, pred_result, average='micro')
 
 print('accuracy: ', precision)
