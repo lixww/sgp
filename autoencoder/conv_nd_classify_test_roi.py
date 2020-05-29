@@ -20,8 +20,9 @@ from utils import reconstruct_image, get_sample_image
 
 
 data_class = 'allClass'
-data_id = '024r_029v'
+data_id = '102v_107r'
 data_type = 'cropped_roi'
+conv_nd = 2
 
 
 # file paths
@@ -42,8 +43,11 @@ channel_len = 23
 
 
 # conv model
-conv_model = models.conv2d_net(channel_len, img_width, img_height, 3)
-conv_model.load_state_dict(torch.load(f'{model_path}/conv2d_on_{data_class}.pth', map_location='cpu'))
+if conv_nd == 2:
+    conv_model = models.conv2d_net(channel_len, img_width, img_height, 3)
+elif conv_nd == 3:
+    conv_model = models.conv3d_net(channel_len, img_width, img_height, 3)
+conv_model.load_state_dict(torch.load(f'{model_path}/conv{conv_nd}d_on_{data_class}.pth', map_location='cpu'))
 conv_model.eval()
 
 
@@ -60,5 +64,5 @@ with torch.no_grad():
 imsave(f'{img_save_path}/{data_id}_orig_eval.png', sample_img)
 
 sample_img_conv = reconstruct_image(sample_img, conv_pred, count_note=True)
-imsave(f'{img_save_path}/{data_id}_conv2d_eval.png', sample_img_conv)
+imsave(f'{img_save_path}/{data_id}_conv{conv_nd}d_eval.png', sample_img_conv)
 

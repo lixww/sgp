@@ -36,7 +36,7 @@ print('train-accuracy: ', precision_clf)
 
 # prepare test data
 print('Prepare test data..')
-imgs = load_raw_images_data(test_data_path)
+imgs = load_raw_images_data(test_data_path, rescale_ratio=0.25, preserve_range_after_rescale=True)
 channel_test, _ = flatten_images(imgs)
 
 print('Model predict..')

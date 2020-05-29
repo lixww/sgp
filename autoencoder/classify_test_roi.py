@@ -16,7 +16,6 @@ data_class = 'allClass'
 data_id = '102v_107r'
 data_type = 'cropped_roi'
 
-img_width, img_height = (699, 684)
 
 # file paths
 data_path = f'autoencoder/data/sgp/{data_id}/cropped_roi/*'
@@ -24,13 +23,12 @@ model_path = 'autoencoder/model'
 img_save_path = 'autoencoder/reconstructed_roi'
 
 channel_len = 23
-pxl_num = img_width * img_height
 
 
 # load test data
 print('Load test data..')
 
-test_dataset, sample_img = load_images_data(data_path)
+test_dataset, sample_img = load_images_data(data_path, rescale_ratio=0.25)
 img_height, img_width = sample_img.shape
 
 # load model

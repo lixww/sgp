@@ -187,3 +187,6 @@ model/
 
 # reference code
 reference/
+
+# others
+md_generator.py
