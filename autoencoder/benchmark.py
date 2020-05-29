@@ -46,4 +46,4 @@ predictions = classifier.predict(channel_test)
 print('Reconstruct..')
 sample_img = imgs[0]
 sample_img = reconstruct_image(sample_img, predictions)
-imsave(f'{img_save_path}/{data_id}_lda.tif', sample_img)
+imsave(f'{img_save_path}/{data_id}_lda.png', sample_img)

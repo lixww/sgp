@@ -46,4 +46,4 @@ predictions = models.predict_class(test_dataset, model)
 
 print('Reconstruct..')
 sample_img = reconstruct_image(sample_img, predictions, enhance_intensity=20)
-imsave(f'{img_save_path}/{data_id}_conv1d.tif', sample_img)
+imsave(f'{img_save_path}/{data_id}_conv1d.png', sample_img)

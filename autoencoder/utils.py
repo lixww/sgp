@@ -127,6 +127,17 @@ def load_raw_images_data(data_path, rescale_ratio=1, preserve_range_after_rescal
     return imgs
 
 
+def get_sample_image(data_path, img_idx=0, rescale_ratio=1, preserve_range_after_rescale=True):
+    ic = imread_collection(data_path)
+    image = imread(ic.files[img_idx], as_gray=True)
+    if rescale_ratio != 1:
+        image = rescale(image, rescale_ratio,
+                        anti_aliasing=False,
+                        preserve_range=preserve_range_after_rescale)
+                        
+    return image
+
+
 def flatten_images(imgs):
     img_height, img_width = imgs[0].shape
     channel_len = len(imgs)
