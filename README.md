@@ -53,7 +53,28 @@ Stacked Denoise Autoencoder [[1]](#xing2015stacked)
 <img src='/figs/networks/sdae.png' width='900'>
 <br />
 
+Convolutional Neural Network (conv-1d) [[2]](#hu2015deep)
+<br />
+<img src='/figs/networks/conv1d.png' width='900'>
+<br />
+
+Convolutional Neural Network (conv-2d)
+<br />
+<img src='/figs/networks/conv2d.png' width='900'>
+<br />
+
+Convolutional Neural Network (1x1-conv) [[3]](#yu2017convolutional)
+<br />
+<img src='/figs/networks/1x1conv.png' width='900'>
+<br />
+
 
 ### Reference
 <a id="xing2015stacked">[1]</a> 
 C. Xing, L. Ma, and X. Yang. Stacked denoise autoencoder based feature extraction and classification for hyperspectral images. Journal of Sensors, 2016:e3632943, 2015.
+
+<a id="hu2015deep">[2]</a> 
+Hu, W., Huang, Y., Wei, L., Zhang, F. and Li, H., 2015. Deep convolutional neural networks for hyperspectral image classification. Journal of Sensors, 2015.
+
+<a id="yu2017convolutional">[3]</a> 
+Yu, S., Jia, S. and Xu, C., 2017. Convolutional neural networks for hyperspectral image classification. Neurocomputing, 219, pp.88-98.
