@@ -1,4 +1,6 @@
 import pandas as pd
+import math
+import numpy as np
 
 import torch
 from torch.utils.data import Dataset, random_split
@@ -35,9 +37,90 @@ class FolioDataset(Dataset):
     def __len__(self):
         return len(self.grdtruth)
 
+class PatchDataset(Dataset):
+    def __init__(self, location, channel, grdtruth):
+        ''' patch: [n,size_of_neighbor,c] 
+            patch_num: n '''
+        self.location = location
+        self.patch = []
+        for p in channel:
+            self.patch.append(torch.FloatTensor(normalize(p, axis=1, norm='max')))
+        self.grdtruth = torch.LongTensor(grdtruth)
 
-def load_labeled_dataset(folder_path='autoencoder/data/sgp'):
-    data_path = f'{folder_path}/training_file_8_bit.csv'
+        self.patch_num = len(grdtruth)
+        self.patch_size = int(math.sqrt(len(channel[0])))
+
+    def __getitem__(self, index):
+        return self.location[index], self.patch[index], self.grdtruth[index]
+
+    def __len__(self):
+        return self.patch_num
+
+
+def load_patch_dataset(data_path='autoencoder/data/sgp/folio_8_bit_extended.csv'):
+    training_file = pd.read_csv(data_path)
+
+    location_head = training_file.columns[2:4]
+    channel_head = training_file.columns[4:-1]
+    channel_len = len(channel_head)
+
+    patch_id = training_file['center_pxl_id'].unique()
+
+    locations = []
+    patches = []
+    y_true = []
+    for p_id in patch_id:
+        pxls_index = training_file.loc[training_file['center_pxl_id']==p_id].index
+        location = training_file.loc[pxls_index][location_head].to_numpy()
+        patch = training_file.loc[pxls_index][channel_head].to_numpy()
+        label = training_file.loc[pxls_index[0]]['class_name']
+
+        locations.append(location)
+        patches.append(patch)
+        y_true.append(label)
+
+    # load data
+    full_dataset = PatchDataset(locations, patches, y_true)
+
+    return full_dataset, channel_len
+
+
+def load_patch_dataset_from_imgs(imgs_data:list, patch_size=5):
+    ''' imgs_data: [c,h,w] 
+        patch_size: odd'''
+    locations = []
+    patches = []
+    y_true = []
+
+    channel_len = len(imgs_data)
+    img_height, img_width = imgs_data[0].shape
+
+    radius = int((patch_size-1)*0.5)
+    center_pxl_count = 0
+    for h in range(radius, img_height-radius):
+        for w in range(radius, img_width-radius):
+            center_pxl_count += 1
+            patch = []
+            # find neighbors
+            neighbors_loc = get_window(radius, x=w, y=h)
+            for (neigh_x, neigh_y) in neighbors_loc:
+                channel_data = []
+                for c in range(channel_len):
+                    channel_data.append(imgs_data[c][neigh_y][neigh_x])
+                # add one neighbor
+                patch.append(channel_data)
+            # add one patch
+            locations.append(neighbors_loc)
+            patches.append(patch)
+    y_true = [-1] * center_pxl_count
+
+    # load data
+    full_dataset = PatchDataset(locations, patches, y_true)
+
+    return full_dataset, channel_len
+
+
+def load_labeled_dataset(data_path='autoencoder/data/sgp/training_file_8_bit.csv'):
     training_file = pd.read_csv(data_path)
 
     location_head = training_file.columns[2:4]
@@ -68,8 +151,7 @@ def split_dataset(full_dataset:Dataset, split_ratio=0.9):
     return train_dataset, dev_dataset
 
 
-def load_raw_labeled_data(folder_path='autoencoder/data/sgp'):
-    data_path = f'{folder_path}/training_file_8_bit.csv'
+def load_raw_labeled_data(data_path='autoencoder/data/sgp/training_file_8_bit.csv'):
     training_file = pd.read_csv(data_path)
 
     channel_head = training_file.columns[4:]
@@ -204,3 +286,25 @@ def reconstruct_image(image, pxl_labels, enhance_intensity=20, count_note=False)
         print('count_01 = ', count_01)
 
     return image
+
+
+def get_window(radius, x=0, y=0):
+    window = []
+    for i in range(-radius, radius+1):
+        for j in range(-radius, radius+1):
+            window.append((j+x,i+y))
+
+    return window
+
+
+def pad_prediction(preds, sample_img, patch_size):
+    img_height, img_width = sample_img.shape
+    radius = int((patch_size-1)*0.5)
+    cur_height = img_height - (radius*2)
+    cur_width = img_width - (radius*2)
+
+    preds = torch.reshape(preds, (cur_height, cur_width)).numpy()
+    preds = np.pad(preds, [2,2], mode='edge')
+    preds = torch.reshape(torch.LongTensor(preds), (-1,))
+
+    return preds

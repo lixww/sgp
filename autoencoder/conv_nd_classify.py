@@ -22,6 +22,7 @@ from utils import reconstruct_image
 data_class = 'allClass'
 data_id = '102v_107r'
 data_type = 'cropped_roi'
+conv_nd = 2
 
 
 # file paths
@@ -71,7 +72,10 @@ print('Train conv net..')
 num_epochs = 2000
 learning_rate = 0.01
 
-conv_model = models.conv2d_net(channel_len, img_width, img_height, 3)
+if conv_nd == 2:
+    conv_model = models.conv2d_net(channel_len, img_width, img_height, 3)
+elif conv_nd == 3:
+    conv_model = models.conv3d_net(channel_len, img_width, img_height, 3)
 criterion = nn.CrossEntropyLoss()
 optimizer = optim.SGD(conv_model.parameters(), lr=learning_rate, momentum=0.9)
 conv_model.train()
@@ -93,7 +97,7 @@ for epoch in range(num_epochs):
 
 
 # save model
-torch.save(conv_model.state_dict(), f'{model_path}/conv2d_on_{data_class}.pth')
+torch.save(conv_model.state_dict(), f'{model_path}/conv{conv_nd}d_on_{data_class}.pth')
 
 
 print('Reconstruct..')
@@ -108,5 +112,5 @@ with torch.no_grad():
 imsave(f'{img_save_path}/{data_id}_orig.png', sample_img)
 
 sample_img_conv = reconstruct_image(sample_img, conv_pred, count_note=True)
-imsave(f'{img_save_path}/{data_id}_conv2d.png', sample_img_conv)
+imsave(f'{img_save_path}/{data_id}_conv{conv_nd}d.png', sample_img_conv)
 

@@ -1,3 +1,5 @@
+import math
+
 from collections import OrderedDict
 
 from sklearn.model_selection import ShuffleSplit
@@ -232,7 +234,7 @@ class sdae_lr(nn.Module):
 
 
 class conv2d_net(nn.Module):
-    ''' 2d conv on pixels '''
+    ''' 2d conv over spatial domain '''
 
     def __init__(self, input_dim, input_w, input_h, output_dim):
         super(conv2d_net, self).__init__()
@@ -276,7 +278,7 @@ class conv2d_net(nn.Module):
 
 
 class conv3d_net(nn.Module):
-    ''' 3d conv '''
+    ''' 3d conv over spectral-spatial domain'''
 
     def __init__(self, input_dim, input_w, input_h, output_dim):
         super(conv3d_net, self).__init__()
@@ -310,7 +312,7 @@ class conv3d_net(nn.Module):
 
 
 class conv1d_net(nn.Module):
-    ''' 1d conv on channels '''
+    ''' 1d conv over spectral domain '''
 
     def __init__(self, input_dim, output_dim):
         super(conv1d_net, self).__init__()
@@ -337,6 +339,38 @@ class conv1d_net(nn.Module):
         conv_out = torch.reshape(conv_out, (-1, self.fc_inp_dim))
         fc_out = self.fc(conv_out)
         out = self.out_layer(fc_out)
+        return out
+
+
+class conv_on_patch(nn.Module):
+    ''' 1x1 conv on patch '''
+
+    def __init__(self, input_dim, output_dim):
+        super(conv_on_patch, self).__init__()
+        self.inp_dim = input_dim
+        self.out_dim = output_dim
+        kernel_size = 1
+        kernel_num = (128, 64)
+
+        self.conv = nn.Sequential(
+            nn.Conv2d(input_dim, kernel_num[0], kernel_size=kernel_size),
+            nn.BatchNorm2d(kernel_num[0]),
+            nn.ReLU(),
+            nn.Conv2d(kernel_num[0], kernel_num[1], kernel_size=kernel_size),
+            nn.BatchNorm2d(kernel_num[1]),
+            nn.ReLU(),
+            nn.Conv2d(kernel_num[1], output_dim, kernel_size=kernel_size),
+            nn.ReLU(),
+            nn.AdaptiveAvgPool2d(1)
+        )
+
+    def forward(self, inp):
+        inp = torch.transpose(inp, 1, 2)
+        _, _, inp_l = inp.shape
+        patch_size = int(math.sqrt(inp_l))
+        inp = torch.reshape(inp, (-1, self.inp_dim, patch_size, patch_size))
+        conv_out = self.conv(inp)
+        out = torch.reshape(conv_out, (-1, self.out_dim))
         return out
 
 

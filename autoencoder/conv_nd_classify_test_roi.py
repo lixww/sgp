@@ -14,7 +14,7 @@ from torch import optim
 from sklearn.preprocessing import normalize
 
 import models
-from utils import FolioDataset, load_images_data, load_raw_images_data
+from utils import FolioDataset, load_raw_images_data
 from utils import reconstruct_image, get_sample_image
 
 
