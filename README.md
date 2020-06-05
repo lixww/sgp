@@ -55,17 +55,17 @@ Stacked Denoise Autoencoder [[1]](#xing2015stacked)
 
 Convolutional Neural Network (conv-1d) [[2]](#hu2015deep)
 <br />
-<img src='/figs/networks/conv1d.png' width='900'>
+<img src='/figs/networks/conv1d.png' width='500'>
 <br />
 
 Convolutional Neural Network (conv-2d)
 <br />
-<img src='/figs/networks/conv2d.png' width='900'>
+<img src='/figs/networks/conv2d.png' width='800'>
 <br />
 
 Convolutional Neural Network (1x1-conv) [[3]](#yu2017convolutional)
 <br />
-<img src='/figs/networks/1x1conv.png' width='900'>
+<img src='/figs/networks/1x1conv.png' width='450'>
 <br />
 
 
