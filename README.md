@@ -8,7 +8,7 @@ Pytorch 1.4.0
 
 
 ### Results preview (on cropped Tiff * rescale-0.25)
-Original image of 024r_029v, LDA version, NN-enhanced version, Conv-1d, Conv-2d, Conv-3d:
+Original image of 024r_029v, LDA version, NN-enhanced version, Conv-1d, Conv-2d, Conv-3d, 1x1-Conv:
 <br />
 <img src='/figs/results_preview/scale25/024r_029v_orig_eval.png' width='100'>
 <img src='/figs/results_preview/scale25/024r_029v_lda.png' width='100'>
@@ -16,9 +16,10 @@ Original image of 024r_029v, LDA version, NN-enhanced version, Conv-1d, Conv-2d,
 <img src='/figs/results_preview/scale25/024r_029v_conv1d.png' width='100'>
 <img src='/figs/results_preview/scale25/024r_029v_conv2d_eval.png' width='100'>
 <img src='/figs/results_preview/scale25/024r_029v_conv3d_eval.png' width='100'>
+<img src='/figs/results_preview/scale25/024r_029v_conv_patch.png' width='100'>
 <br />
 
-Original image of 102v_107r, LDA version, NN-enhanced version, Conv-1d, Conv-2d, Conv-3d:
+Original image of 102v_107r, LDA version, NN-enhanced version, Conv-1d, Conv-2d, Conv-3d, 1x1-Conv:
 <br />
 <img src='/figs/results_preview/scale25/102v_107r_orig_eval.png' width='100'>
 <img src='/figs/results_preview/scale25/102v_107r_lda.png' width='100'>
@@ -26,9 +27,10 @@ Original image of 102v_107r, LDA version, NN-enhanced version, Conv-1d, Conv-2d,
 <img src='/figs/results_preview/scale25/102v_107r_conv1d.png' width='100'>
 <img src='/figs/results_preview/scale25/102v_107r_conv2d_eval.png' width='100'>
 <img src='/figs/results_preview/scale25/102v_107r_conv3d_eval.png' width='100'>
+<img src='/figs/results_preview/scale25/102v_107r_conv_patch.png' width='100'>
 <br />
 
-Original image of 214v_221r, LDA version, NN-enhanced version, Conv-1d, Conv-2d, Conv-3d:
+Original image of 214v_221r, LDA version, NN-enhanced version, Conv-1d, Conv-2d, Conv-3d, 1x1-Conv:
 <br />
 <img src='/figs/results_preview/scale25/214v_221r_orig_eval.png' width='100'>
 <img src='/figs/results_preview/scale25/214v_221r_lda.png' width='100'>
@@ -36,6 +38,7 @@ Original image of 214v_221r, LDA version, NN-enhanced version, Conv-1d, Conv-2d,
 <img src='/figs/results_preview/scale25/214v_221r_conv1d.png' width='100'>
 <img src='/figs/results_preview/scale25/214v_221r_conv2d_eval.png' width='100'>
 <img src='/figs/results_preview/scale25/214v_221r_conv3d_eval.png' width='100'>
+<img src='/figs/results_preview/scale25/214v_221r_conv_patch.png' width='100'>
 <br />
 
 
