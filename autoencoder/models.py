@@ -243,7 +243,7 @@ class conv2d_net(nn.Module):
         kernel_size = 5
         kernel_num = (20,)
         self.conv = nn.Sequential(
-            nn.Conv2d(1, kernel_num[0], 
+            nn.Conv2d(input_dim, kernel_num[0], 
                         kernel_size=kernel_size, 
                         stride=1),
             nn.ReLU(),
@@ -253,7 +253,7 @@ class conv2d_net(nn.Module):
             #             padding=int((kernel_size-1)*0.5)),
             # nn.ReLU(),
         )
-        fc_inp_dim = input_dim * kernel_num[0]
+        fc_inp_dim = 1 * kernel_num[0]
         self.fc_inp_dim = fc_inp_dim
         self.fc = nn.Sequential(
             nn.Linear(fc_inp_dim, 100),
@@ -265,7 +265,7 @@ class conv2d_net(nn.Module):
 
     
     def forward(self, inp):
-        inp = torch.reshape(inp, (-1, 1, self.inp_h, self.inp_w))
+        inp = torch.reshape(inp, (1, -1, self.inp_h, self.inp_w))
         conv_out = self.conv(inp)
         _, conv_c, _, _ = conv_out.shape
         conv_out = torch.reshape(conv_out, (1,)+conv_out.shape)
