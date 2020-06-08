@@ -14,7 +14,7 @@ from utils import load_patch_dataset_from_imgs, pad_prediction
 
 
 data_class = 'allClass'
-data_id = '024r_029v'
+data_id = '102v_107r'
 data_type = 'cropped_roi'
 
 
@@ -26,7 +26,7 @@ img_save_path = 'autoencoder/reconstructed_roi'
 
 # load test data
 print('Load test data..')
-test_imgs = load_raw_images_data(data_path, rescale_ratio=1, preserve_range_after_rescale=True)
+test_imgs = load_raw_images_data(data_path, rescale_ratio=0.25, preserve_range_after_rescale=True)
 sample_img = test_imgs[0]
 test_dataset, channel_len = load_patch_dataset_from_imgs(test_imgs, patch_size=3)
 
@@ -45,4 +45,4 @@ predictions = pad_prediction(predictions, sample_img, test_dataset.patch_size)
 
 print('Reconstruct..')
 sample_img = reconstruct_image(sample_img, predictions, enhance_intensity=20, count_note=True)
-imsave(f'{img_save_path}/{data_id}_conv_incep_raw_scale.png', sample_img)
+imsave(f'{img_save_path}/{data_id}_conv_incep.png', sample_img)
