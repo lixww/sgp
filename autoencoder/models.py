@@ -322,9 +322,10 @@ class conv1d_net(nn.Module):
         
         self.conv = nn.Sequential(
             nn.Conv1d(1, kernel_num, kernel_size=kernel_size, stride=1),
-            nn.ReLU()
+            nn.ReLU(),
+            nn.MaxPool1d(2)
         )
-        fc_inp_dim = (input_dim - kernel_size + 1) * kernel_num
+        fc_inp_dim = int((input_dim - kernel_size) * 0.5 * kernel_num)
         self.fc_inp_dim = fc_inp_dim
         self.fc = nn.Sequential(
             nn.Linear(fc_inp_dim, 100),
@@ -372,6 +373,71 @@ class conv_on_patch(nn.Module):
         conv_out = self.conv(inp)
         out = torch.reshape(conv_out, (-1, self.out_dim))
         return out
+
+
+class conv_inception(nn.Module):
+    ''' convnet + inception module '''
+
+    def __init__(self, input_dim, output_dim):
+        super(conv_inception, self).__init__()
+        self.inp_dim = input_dim
+        self.out_dim = output_dim
+        
+        incep_output_dim = 128
+        self.inception1 = nn.Sequential(
+            nn.Conv2d(input_dim, incep_output_dim, kernel_size=1),
+            nn.MaxPool2d(3)
+        )
+        self.inception2 = nn.Conv2d(input_dim, incep_output_dim, kernel_size=3)
+        self.conv_cat = nn.Sequential(
+            nn.ReLU(),
+            nn.LocalResponseNorm(5, k=2),
+            nn.Conv2d(incep_output_dim*2, 128, kernel_size=1),
+            nn.ReLU(),
+            nn.LocalResponseNorm(5, k=2)
+        )
+        self.residual = nn.Sequential(
+            nn.Conv2d(128, 128, kernel_size=1),
+            nn.ReLU(),
+            nn.Conv2d(128, 128, kernel_size=1),
+        )
+        self.activat = nn.ReLU()
+        self.conv_alex = nn.Sequential(
+            nn.ReLU(),
+            nn.Conv2d(128, 128, kernel_size=1),
+            nn.ReLU(),
+            nn.Dropout(),
+            nn.Conv2d(128, 128, kernel_size=1),
+            nn.ReLU(),
+            nn.Dropout(),
+            nn.Conv2d(128, 128, kernel_size=1),
+            nn.AdaptiveMaxPool3d((output_dim, None, None))
+        )
+
+    def forward(self, inp):
+        inp = torch.transpose(inp, 1, 2)
+        _, _, inp_l = inp.shape
+        patch_size = int(math.sqrt(inp_l))
+        inp = torch.reshape(inp, (-1, self.inp_dim, patch_size, patch_size))
+        incep1_out = self.inception1(inp)
+        incep2_out = self.inception2(inp)
+        # depth concat
+        incep_out = torch.cat((incep1_out, incep2_out), dim=1)
+        conv_cat_out = self.conv_cat(incep_out)
+        # residual learning
+        resid_out = self.residual(conv_cat_out)
+        # sum
+        sum_out = torch.add(resid_out, conv_cat_out)
+        sum_out = self.activat(sum_out)
+        # residual learning
+        resid_out = self.residual(sum_out)
+        # sum
+        sum_out = torch.add(resid_out, sum_out)
+        # conv as alexnet
+        conv_alex_out = self.conv_alex(sum_out)
+        out = torch.reshape(conv_alex_out, (-1, self.out_dim))
+        return out
+
 
 
 def cal_accuracy(dataset: Dataset, model):

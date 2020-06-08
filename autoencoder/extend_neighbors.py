@@ -49,8 +49,8 @@ for folio_name in target_folio:
     filenames = get_filenames(file_path)
     imgs = load_raw_images_data(filenames, preserve_range_after_rescale=True)
     channel_len = len(imgs)
-    # find neighbors (5x5)
-    radius = 2
+    # find neighbors: [(5x5), (3x3)]
+    radius = 1
     pxls_index = center_pxls.loc[center_pxls['folio_name'] == folio_name].index
     for i in pxls_index:
         label = center_pxls.loc[i]['class_name']
@@ -72,4 +72,4 @@ for folio_name in target_folio:
 
 # save extended pixels
 print('extended count:', extend_pxls.shape)
-extend_pxls.to_csv(f'{data_path}/folio_8_bit_extended.csv', sep=',', index=False)
+extend_pxls.to_csv(f'{data_path}/folio_8_bit_extended_3x3.csv', sep=',', index=False)

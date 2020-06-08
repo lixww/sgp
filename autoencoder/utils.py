@@ -39,7 +39,7 @@ class FolioDataset(Dataset):
 
 class PatchDataset(Dataset):
     def __init__(self, location, channel, grdtruth):
-        ''' patch: [n,size_of_neighbor,c] 
+        ''' patch: [n,neighbor_num,c] 
             patch_num: n '''
         self.location = location
         self.patch = []
@@ -57,7 +57,7 @@ class PatchDataset(Dataset):
         return self.patch_num
 
 
-def load_patch_dataset(data_path='autoencoder/data/sgp/folio_8_bit_extended.csv'):
+def load_patch_dataset(data_path='autoencoder/data/sgp/folio_8_bit_extended_5x5.csv'):
     training_file = pd.read_csv(data_path)
 
     location_head = training_file.columns[2:4]
@@ -304,7 +304,7 @@ def pad_prediction(preds, sample_img, patch_size):
     cur_width = img_width - (radius*2)
 
     preds = torch.reshape(preds, (cur_height, cur_width)).numpy()
-    preds = np.pad(preds, [2,2], mode='edge')
+    preds = np.pad(preds, radius, mode='edge')
     preds = torch.reshape(torch.LongTensor(preds), (-1,))
 
     return preds
