@@ -77,9 +77,9 @@ Convolutional Neural Network (1x1-conv) [[3]](#yu2017convolutional)
 <img src='/figs/networks/1x1conv.png' width='450'>
 <br />
 
-Convnet + Inception (9 convolutional layers) [[4]](#lee2016contextual)
+Convnet + Inception: 9 convolutional layers (conv-inception) [[4]](#lee2016contextual)
 <br />
-<img src='/figs/networks/conv_incep.png' width='450'>
+<img src='/figs/networks/conv_incep.png' width='800'>
 <br />
 
 
