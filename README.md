@@ -77,6 +77,11 @@ Convolutional Neural Network (1x1-conv) [[3]](#yu2017convolutional)
 <img src='/figs/networks/1x1conv.png' width='450'>
 <br />
 
+Convnet + Inception (9 convolutional layers) [[4]](#lee2016contextual)
+<br />
+<img src='/figs/networks/conv_incep.png' width='450'>
+<br />
+
 
 ### Reference
 <a id="xing2015stacked">[1]</a> 
@@ -87,3 +92,6 @@ Hu, W., Huang, Y., Wei, L., Zhang, F. and Li, H., 2015. Deep convolutional neura
 
 <a id="yu2017convolutional">[3]</a> 
 Yu, S., Jia, S. and Xu, C., 2017. Convolutional neural networks for hyperspectral image classification. Neurocomputing, 219, pp.88-98.
+
+<a id="lee2016contextual">[4]</a> 
+Lee, H. and Kwon, H., 2016, July. Contextual deep CNN based hyperspectral classification. In 2016 IEEE International Geoscience and Remote Sensing Symposium (IGARSS) (pp. 3322-3325). IEEE.
