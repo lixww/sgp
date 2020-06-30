@@ -376,7 +376,7 @@ class conv_on_patch(nn.Module):
 
 
 class conv_inception(nn.Module):
-    ''' convnet + inception module '''
+    ''' 2d-convnet + inception module '''
 
     def __init__(self, input_dim, output_dim):
         super(conv_inception, self).__init__()
