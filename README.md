@@ -74,7 +74,7 @@ Convolutional Neural Network (conv-2d)
 
 Convolutional Neural Network (conv-3d)
 <br />
-<img src='/figs/networks/conv3d.png' width='800'>
+<img src='/figs/networks/conv3d.png' width='680'>
 <br />
 
 Convolutional Neural Network (1x1-conv) [[3]](#yu2017convolutional)
