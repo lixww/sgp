@@ -391,10 +391,10 @@ class conv_inception(nn.Module):
         self.inception2 = nn.Conv2d(input_dim, incep_output_dim, kernel_size=3)
         self.conv_cat = nn.Sequential(
             nn.ReLU(),
-            nn.LocalResponseNorm(5, k=2),
+            nn.LocalResponseNorm(3, k=2),
             nn.Conv2d(incep_output_dim*2, 128, kernel_size=1),
             nn.ReLU(),
-            nn.LocalResponseNorm(5, k=2)
+            nn.LocalResponseNorm(3, k=2)
         )
         self.residual = nn.Sequential(
             nn.Conv2d(128, 128, kernel_size=1),

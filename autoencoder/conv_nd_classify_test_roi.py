@@ -20,7 +20,8 @@ from utils import reconstruct_image, get_sample_image
 
 
 data_class = 'allClass'
-data_id = '102v_107r'
+model_data_id = '102v_107r'
+data_id = '214v_221r'
 data_type = 'cropped_roi'
 conv_nd = 2
 
@@ -47,7 +48,7 @@ if conv_nd == 2:
     conv_model = models.conv2d_net(channel_len, img_width, img_height, 3)
 elif conv_nd == 3:
     conv_model = models.conv3d_net(channel_len, img_width, img_height, 3)
-conv_model.load_state_dict(torch.load(f'{model_path}/conv{conv_nd}d_on_{data_class}.pth', map_location='cpu'))
+conv_model.load_state_dict(torch.load(f'{model_path}/conv{conv_nd}d_on_{data_class}_{model_data_id}.pth', map_location='cpu'))
 conv_model.eval()
 
 

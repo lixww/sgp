@@ -22,7 +22,7 @@ from utils import reconstruct_image
 data_class = 'allClass'
 data_id = '102v_107r'
 data_type = 'cropped_roi'
-conv_nd = 2
+conv_nd = 3
 
 
 # file paths
@@ -97,7 +97,7 @@ for epoch in range(num_epochs):
 
 
 # save model
-torch.save(conv_model.state_dict(), f'{model_path}/conv{conv_nd}d_on_{data_class}.pth')
+torch.save(conv_model.state_dict(), f'{model_path}/conv{conv_nd}d_on_{data_class}_{data_id}.pth')
 
 
 print('Reconstruct..')
