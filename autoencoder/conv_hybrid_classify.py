@@ -33,7 +33,7 @@ num_epoch = 500
 batch_size = 16
 
 
-model = models.conv_inception(channel_len, 3)
+model = models.conv_hybrid(channel_len, 3)
 criterion = nn.CrossEntropyLoss()
 optimizer = optim.SGD(model.parameters(), lr=learning_rate, momentum=0.9)
 model.train()
@@ -64,4 +64,4 @@ print_acc(model, train_dataset, print_note='train')
 print_acc(model, dev_dataset, print_note='validat')
 
 # save model
-torch.save(model.state_dict(), f'{model_path}/conv_incep_on_{data_class}.pth')
+torch.save(model.state_dict(), f'{model_path}/conv_hybrid_on_{data_class}.pth')

@@ -23,7 +23,7 @@ data_class = 'allClass'
 model_data_id = '102v_107r'
 data_id = '214v_221r'
 data_type = 'cropped_roi'
-conv_nd = 2
+conv_nd = 3
 
 
 # file paths
@@ -65,5 +65,5 @@ with torch.no_grad():
 imsave(f'{img_save_path}/{data_id}_orig_eval.png', sample_img)
 
 sample_img_conv = reconstruct_image(sample_img, conv_pred, count_note=True)
-imsave(f'{img_save_path}/{data_id}_conv{conv_nd}d_eval.png', sample_img_conv)
+imsave(f'{img_save_path}/{data_id}_conv{conv_nd}d_eval_model_{model_data_id}.png', sample_img_conv)
 

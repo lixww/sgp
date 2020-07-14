@@ -375,11 +375,11 @@ class conv_on_patch(nn.Module):
         return out
 
 
-class conv_inception(nn.Module):
+class conv_hybrid(nn.Module):
     ''' 2d-convnet + inception module '''
 
     def __init__(self, input_dim, output_dim):
-        super(conv_inception, self).__init__()
+        super(conv_hybrid, self).__init__()
         self.inp_dim = input_dim
         self.out_dim = output_dim
         
