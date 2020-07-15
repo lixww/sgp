@@ -20,10 +20,10 @@ from utils import reconstruct_image, get_sample_image
 
 
 data_class = 'allClass'
-model_data_id = '102v_107r'
-data_id = '214v_221r'
+model_data_id = '024r_029v'
+data_id = '102v_107r'
 data_type = 'cropped_roi'
-conv_nd = 3
+conv_nd = 2
 
 
 # file paths

@@ -240,6 +240,7 @@ class conv2d_net(nn.Module):
         super(conv2d_net, self).__init__()
         self.inp_w = input_w
         self.inp_h = input_h
+        self.out_dim = output_dim
         kernel_size = 5
         kernel_num = (20,)
         self.conv = nn.Sequential(
@@ -261,6 +262,13 @@ class conv2d_net(nn.Module):
             nn.Linear(100, 10),
             nn.ReLU()
         )
+        self.conv_alex = nn.Sequential(
+            nn.Conv2d(kernel_num[0], 128, kernel_size=1),
+            nn.ReLU(),
+            nn.Dropout(),
+            nn.Conv2d(128, 128, kernel_size=1),
+            nn.AdaptiveMaxPool3d((output_dim, None, None))
+        )
         self.out_layer = nn.Linear(10, output_dim)
 
     
@@ -270,10 +278,16 @@ class conv2d_net(nn.Module):
         _, conv_c, _, _ = conv_out.shape
         conv_out = torch.reshape(conv_out, (1,)+conv_out.shape)
         conv_out = nn.functional.interpolate(conv_out, size=(conv_c, self.inp_h, self.inp_w))
+        # use normal fc
         conv_out = torch.reshape(conv_out, (self.fc_inp_dim, -1))
         conv_out = conv_out.T
         fc_out = self.fc(conv_out)
         out = self.out_layer(fc_out)
+        # use conv_alex
+        # conv_out = torch.reshape(conv_out, conv_out.shape[1:])
+        # conv_alex_out = self.conv_alex(conv_out)
+        # out = torch.reshape(conv_alex_out, (self.out_dim, -1))
+        # out = out.T
         return out
 
 
@@ -433,6 +447,92 @@ class conv_hybrid(nn.Module):
         resid_out = self.residual(sum_out)
         # sum
         sum_out = torch.add(resid_out, sum_out)
+        # conv as alexnet
+        conv_alex_out = self.conv_alex(sum_out)
+        out = torch.reshape(conv_alex_out, (-1, self.out_dim))
+        return out
+
+
+class conv_incep(nn.Module):
+    ''' inception module '''
+
+    def __init__(self, input_dim, output_dim):
+        super(conv_incep, self).__init__()
+        self.inp_dim = input_dim
+        self.out_dim = output_dim
+
+        incep_output_dim = 128
+        self.inception1 = nn.Sequential(
+            nn.Conv2d(input_dim, incep_output_dim, kernel_size=1),
+            nn.MaxPool2d(3)
+        )
+        self.inception2 = nn.Conv2d(input_dim, incep_output_dim, kernel_size=3)
+        self.conv_cat = nn.Sequential(
+            nn.ReLU(),
+            nn.LocalResponseNorm(3, k=2),
+            nn.Conv2d(incep_output_dim*2, 128, kernel_size=1),
+            nn.ReLU(),
+            nn.LocalResponseNorm(3, k=2)
+        )
+        self.conv_alex = nn.Sequential(
+            nn.ReLU(),
+            nn.Dropout(),
+            nn.Conv2d(128, 128, kernel_size=1),
+            nn.AdaptiveMaxPool3d((output_dim, None, None))
+        )
+
+
+    def forward(self, inp):
+        inp = torch.transpose(inp, 1, 2)
+        _, _, inp_l = inp.shape
+        patch_size = int(math.sqrt(inp_l))
+        inp = torch.reshape(inp, (-1, self.inp_dim, patch_size, patch_size))
+        incep1_out = self.inception1(inp)
+        incep2_out = self.inception2(inp)
+        # depth concat
+        incep_out = torch.cat((incep1_out, incep2_out), dim=1)
+        conv_cat_out = self.conv_cat(incep_out)
+        # conv as alexnet
+        conv_alex_out = self.conv_alex(conv_cat_out)
+        out = torch.reshape(conv_alex_out, (-1, self.out_dim))
+        return out
+
+
+class conv_resid(nn.Module):
+    ''' residual learning module '''
+
+    def __init__(self, input_dim, output_dim):
+        super(conv_resid, self).__init__()
+        self.inp_dim = input_dim
+        self.out_dim = output_dim
+
+        self.conv1 = nn.Sequential(
+            nn.Conv2d(input_dim, 128, kernel_size=3),
+            nn.ReLU()
+        )
+        self.residual = nn.Sequential(
+            nn.Conv2d(128, 128, kernel_size=1),
+            nn.ReLU(),
+            nn.Conv2d(128, 128, kernel_size=1),
+        )
+        self.conv_alex = nn.Sequential(
+            nn.ReLU(),
+            nn.Dropout(),
+            nn.Conv2d(128, 128, kernel_size=1),
+            nn.AdaptiveMaxPool3d((output_dim, None, None))
+        )
+        
+
+    def forward(self, inp):
+        inp = torch.transpose(inp, 1, 2)
+        _, _, inp_l = inp.shape
+        patch_size = int(math.sqrt(inp_l))
+        inp = torch.reshape(inp, (-1, self.inp_dim, patch_size, patch_size))
+        conv1_out = self.conv1(inp)
+        # residual learning
+        resid_out = self.residual(conv1_out)
+        # sum
+        sum_out = torch.add(resid_out, conv1_out)
         # conv as alexnet
         conv_alex_out = self.conv_alex(sum_out)
         out = torch.reshape(conv_alex_out, (-1, self.out_dim))

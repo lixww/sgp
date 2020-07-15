@@ -22,7 +22,7 @@ from utils import reconstruct_image
 data_class = 'allClass'
 data_id = '024r_029v'
 data_type = 'cropped_roi'
-conv_nd = 3
+conv_nd = 2
 
 
 # file paths
