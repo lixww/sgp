@@ -291,6 +291,45 @@ class conv2d_net(nn.Module):
         return out
 
 
+class fconv2d_net(nn.Module):
+    ''' 2d fully conv over spatial domain '''
+
+    def __init__(self, input_dim, input_w, input_h, output_dim):
+        super(fconv2d_net, self).__init__()
+        self.inp_w = input_w
+        self.inp_h = input_h
+        self.out_dim = output_dim
+        kernel_size = 5
+        kernel_num = (20,)
+        self.conv = nn.Sequential(
+            nn.Conv2d(input_dim, kernel_num[0], 
+                        kernel_size=kernel_size, 
+                        stride=1),
+            nn.ReLU(),
+        )
+        self.transp_conv = nn.ConvTranspose2d(kernel_num[0], input_dim,
+                                                kernel_size=kernel_size,
+                                                stride=1)
+        self.conv_alex = nn.Sequential(
+            nn.Conv2d(input_dim, 128, kernel_size=1),
+            nn.ReLU(),
+            nn.Dropout(),
+            nn.Conv2d(128, 128, kernel_size=1),
+            nn.AdaptiveMaxPool3d((output_dim, None, None))
+        )
+
+    
+    def forward(self, inp):
+        inp = torch.reshape(inp, (1, -1, self.inp_h, self.inp_w))
+        conv_out = self.conv(inp)
+        transp_conv_out = self.transp_conv(conv_out)
+        # use conv_alex
+        conv_alex_out = self.conv_alex(transp_conv_out)
+        out = torch.reshape(conv_alex_out, (self.out_dim, -1))
+        out = out.T
+        return out
+
+
 class conv3d_net(nn.Module):
     ''' 3d conv over spectral-spatial domain'''
 
@@ -298,6 +337,7 @@ class conv3d_net(nn.Module):
         super(conv3d_net, self).__init__()
         self.inp_w = input_w
         self.inp_h = input_h
+        self.inp_dim = input_dim
         kernel_size = 7
         kernel_num = 20
 
@@ -305,7 +345,7 @@ class conv3d_net(nn.Module):
             nn.Conv3d(1, kernel_num, kernel_size=kernel_size, stride=1),
             nn.ReLU()
         )
-        fc_inp_dim = kernel_num * (input_dim - kernel_size + 1)
+        fc_inp_dim = kernel_num * input_dim
         self.fc_inp_dim = fc_inp_dim
         self.fc = nn.Sequential(
             nn.Linear(fc_inp_dim, 100),
@@ -316,12 +356,49 @@ class conv3d_net(nn.Module):
     def forward(self, inp):
         inp = torch.reshape(inp, (1, 1, -1, self.inp_h, self.inp_w))
         conv_out = self.conv(inp)
-        _, _, conv_d, _, _ = conv_out.shape
-        conv_out = nn.functional.interpolate(conv_out, size=(conv_d, self.inp_h, self.inp_w))
+        conv_out = nn.functional.interpolate(conv_out, size=(self.inp_dim, self.inp_h, self.inp_w))
         conv_out = torch.reshape(conv_out, (self.fc_inp_dim, -1))
         conv_out = conv_out.T
         fc_out = self.fc(conv_out)
         out = self.out_layer(fc_out)
+        return out
+
+
+class fconv3d_net(nn.Module):
+    ''' 3d fully conv over spectral-spatial domain'''
+
+    def __init__(self, input_dim, input_w, input_h, output_dim):
+        super(fconv3d_net, self).__init__()
+        self.inp_w = input_w
+        self.inp_h = input_h
+        self.out_dim = output_dim
+        kernel_size = 7
+        kernel_num = 20
+
+        self.conv = nn.Sequential(
+            nn.Conv3d(1, kernel_num, kernel_size=kernel_size, stride=1),
+            nn.ReLU()
+        )
+        self.transp_conv = nn.ConvTranspose3d(kernel_num, 1, kernel_size=kernel_size, stride=1)
+        self.conv_alex = nn.Sequential(
+            nn.Conv3d(1, 128, kernel_size=1),
+            nn.ReLU(),
+            nn.Dropout(),
+            nn.Conv3d(128, 128, kernel_size=1),
+            nn.AdaptiveMaxPool3d((1, None, None))
+        )
+        self.out_layer = nn.AdaptiveMaxPool3d((output_dim, None, None))
+
+
+    def forward(self, inp):
+        inp = torch.reshape(inp, (1, 1, -1, self.inp_h, self.inp_w))
+        conv_out = self.conv(inp)
+        transp_conv_out = self.transp_conv(conv_out)
+        conv_alex_out = self.conv_alex(transp_conv_out)
+        conv_alex_out = torch.reshape(conv_alex_out, (1, 1, -1, self.inp_h, self.inp_w))
+        out = self.out_layer(conv_alex_out)
+        out = torch.reshape(out, (self.out_dim, -1))
+        out = out.T
         return out
 
 
@@ -618,3 +695,21 @@ def predict_class(dataset: Dataset, model):
             pred_res = torch.cat((pred_res, prediction))
             
     return pred_res
+
+
+def get_model_output(dataset: Dataset, model):
+    dataloader = DataLoader(dataset, batch_size=1000, shuffle=False)
+    output_res = []
+    with torch.no_grad():
+        for data in dataloader:
+            inp = data[1]
+            if hasattr(model, 'encoder'):
+                output = model.encoder(inp)
+            else:
+                output = model(inp)
+            if len(output_res) <= 0:
+                output_res = output
+                continue
+            output_res = torch.cat((output_res, output))
+            
+    return output_res

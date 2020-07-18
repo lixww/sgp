@@ -21,9 +21,10 @@ from utils import reconstruct_image, get_sample_image
 
 data_class = 'allClass'
 model_data_id = '024r_029v'
-data_id = '102v_107r'
+data_id = '214v_221r'
 data_type = 'cropped_roi'
-conv_nd = 2
+conv_nd = 3
+is_fcnet = True
 
 
 # file paths
@@ -44,11 +45,19 @@ channel_len = 23
 
 
 # conv model
-if conv_nd == 2:
-    conv_model = models.conv2d_net(channel_len, img_width, img_height, 3)
-elif conv_nd == 3:
-    conv_model = models.conv3d_net(channel_len, img_width, img_height, 3)
-conv_model.load_state_dict(torch.load(f'{model_path}/conv{conv_nd}d_on_{data_class}_{model_data_id}.pth', map_location='cpu'))
+if is_fcnet:
+    if conv_nd == 2:
+        conv_model = models.fconv2d_net(channel_len, img_width, img_height, 3)
+    elif conv_nd == 3:
+        conv_model = models.fconv3d_net(channel_len, img_width, img_height, 3)
+    model_name = f'{model_path}/fconv{conv_nd}d_on_{data_class}_{model_data_id}.pth'
+else:
+    if conv_nd == 2:
+        conv_model = models.conv2d_net(channel_len, img_width, img_height, 3)
+    elif conv_nd == 3:
+        conv_model = models.conv3d_net(channel_len, img_width, img_height, 3)
+    model_name = f'{model_path}/conv{conv_nd}d_on_{data_class}_{model_data_id}.pth'
+conv_model.load_state_dict(torch.load(model_name, map_location='cpu'))
 conv_model.eval()
 
 
@@ -65,5 +74,9 @@ with torch.no_grad():
 imsave(f'{img_save_path}/{data_id}_orig_eval.png', sample_img)
 
 sample_img_conv = reconstruct_image(sample_img, conv_pred, count_note=True)
-imsave(f'{img_save_path}/{data_id}_conv{conv_nd}d_eval_model_{model_data_id}.png', sample_img_conv)
+if is_fcnet:
+    img_name = f'{img_save_path}/{data_id}_fconv{conv_nd}d_eval_model_{model_data_id}.png'
+else:
+    img_name = f'{img_save_path}/{data_id}_conv{conv_nd}d_eval_model_{model_data_id}.png'
+imsave(img_name, sample_img_conv)
 

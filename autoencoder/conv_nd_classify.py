@@ -22,7 +22,8 @@ from utils import reconstruct_image
 data_class = 'allClass'
 data_id = '024r_029v'
 data_type = 'cropped_roi'
-conv_nd = 2
+conv_nd = 3
+is_fcnet = True
 
 
 # file paths
@@ -69,13 +70,19 @@ ae_pred_norm = torch.FloatTensor(normalize(torch.reshape(ae_pred,(1,-1)), norm='
 # conv model
 print('Train conv net..')
 
-num_epochs = 2000
+num_epochs = 1000
 learning_rate = 0.01
 
-if conv_nd == 2:
-    conv_model = models.conv2d_net(channel_len, img_width, img_height, 3)
-elif conv_nd == 3:
-    conv_model = models.conv3d_net(channel_len, img_width, img_height, 3)
+if is_fcnet:
+    if conv_nd == 2:
+        conv_model = models.fconv2d_net(channel_len, img_width, img_height, 3)
+    elif conv_nd == 3:
+        conv_model = models.fconv3d_net(channel_len, img_width, img_height, 3)
+else:
+    if conv_nd == 2:
+        conv_model = models.conv2d_net(channel_len, img_width, img_height, 3)
+    elif conv_nd == 3:
+        conv_model = models.conv3d_net(channel_len, img_width, img_height, 3)
 criterion = nn.CrossEntropyLoss()
 optimizer = optim.SGD(conv_model.parameters(), lr=learning_rate, momentum=0.9)
 conv_model.train()
@@ -97,7 +104,11 @@ for epoch in range(num_epochs):
 
 
 # save model
-torch.save(conv_model.state_dict(), f'{model_path}/conv{conv_nd}d_on_{data_class}_{data_id}.pth')
+if is_fcnet:
+    model_name = f'{model_path}/fconv{conv_nd}d_on_{data_class}_{data_id}.pth'
+else:
+    model_name = f'{model_path}/conv{conv_nd}d_on_{data_class}_{data_id}.pth'
+torch.save(conv_model.state_dict(), model_name)
 
 
 print('Reconstruct..')
@@ -112,5 +123,9 @@ with torch.no_grad():
 imsave(f'{img_save_path}/{data_id}_orig.png', sample_img)
 
 sample_img_conv = reconstruct_image(sample_img, conv_pred, count_note=True)
-imsave(f'{img_save_path}/{data_id}_conv{conv_nd}d.png', sample_img_conv)
+if is_fcnet:
+    img_name = f'{img_save_path}/{data_id}_fconv{conv_nd}d.png'
+else:
+    img_name = f'{img_save_path}/{data_id}_conv{conv_nd}d.png'
+imsave(img_name, sample_img_conv)
 
