@@ -358,6 +358,40 @@ class conv3d_net(nn.Module):
         out = self.out_layer(fc_out)
         return out
 
+class conv3d_hyb_net(nn.Module):
+    ''' 3d conv + fully connected '''
+
+    def __init__(self, input_dim, input_w, input_h, output_dim):
+        super(conv3d_hyb_net, self).__init__()
+        self.inp_w = input_w
+        self.inp_h = input_h
+        self.inp_dim = input_dim
+        kernel_size = 7
+        kernel_num = 20
+
+        self.conv = nn.Sequential(
+            nn.Conv3d(1, kernel_num, kernel_size=kernel_size, stride=1),
+            nn.ReLU()
+        )
+        self.transp_conv = nn.ConvTranspose3d(kernel_num, 1, kernel_size=kernel_size, stride=1)
+        fc_inp_dim = input_dim
+        self.fc_inp_dim = fc_inp_dim
+        self.fc = nn.Sequential(
+            nn.Linear(fc_inp_dim, 100),
+            nn.ReLU()
+        )
+        self.out_layer = nn.Linear(100, output_dim)
+
+    def forward(self, inp):
+        inp = torch.reshape(inp, (1, 1, -1, self.inp_h, self.inp_w))
+        conv_out = self.conv(inp)
+        transp_conv_out = self.transp_conv(conv_out)
+        transp_conv_out = torch.reshape(transp_conv_out, (self.fc_inp_dim, -1))
+        transp_conv_out = transp_conv_out.T
+        fc_out = self.fc(transp_conv_out)
+        out = self.out_layer(fc_out)
+        return out
+
 
 class fconv3d_net(nn.Module):
     ''' 3d fully conv over spectral-spatial domain'''

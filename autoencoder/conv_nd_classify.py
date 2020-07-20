@@ -24,7 +24,8 @@ folio_ids = ['024r_029v', '102v_107r', '214v_221r']
 data_id = folio_ids[2]
 data_type = 'cropped_roi'
 conv_nd = 3
-is_fcnet = True
+# net_style {'normal': 0, 'tconv': 1, 'hybrid': 2}
+net_style = 2
 
 
 # file paths
@@ -74,12 +75,15 @@ print('Train conv net..')
 num_epochs = 1000
 learning_rate = 0.01
 
-if is_fcnet:
+if net_style == 2:
+    if conv_nd == 3:
+        conv_model = models.conv3d_hyb_net(channel_len, img_width, img_height, 3)
+elif net_style == 1:
     if conv_nd == 2:
         conv_model = models.fconv2d_net(channel_len, img_width, img_height, 3)
     elif conv_nd == 3:
         conv_model = models.fconv3d_net(channel_len, img_width, img_height, 3)
-else:
+elif net_style == 0:
     if conv_nd == 2:
         conv_model = models.conv2d_net(channel_len, img_width, img_height, 3)
     elif conv_nd == 3:
@@ -105,9 +109,11 @@ for epoch in range(num_epochs):
 
 
 # save model
-if is_fcnet:
+if net_style == 2:
+    model_name = f'{model_path}/conv{conv_nd}d_hyb_on_{data_class}_{data_id}.pth'
+elif net_style == 1:
     model_name = f'{model_path}/fconv{conv_nd}d_on_{data_class}_{data_id}.pth'
-else:
+elif net_style == 0:
     model_name = f'{model_path}/conv{conv_nd}d_on_{data_class}_{data_id}.pth'
 torch.save(conv_model.state_dict(), model_name)
 
@@ -124,9 +130,11 @@ with torch.no_grad():
 imsave(f'{img_save_path}/{data_id}_orig.png', sample_img)
 
 sample_img_conv = reconstruct_image(sample_img, conv_pred, count_note=True)
-if is_fcnet:
+if net_style == 2:
+    img_name = f'{img_save_path}/{data_id}_conv{conv_nd}d_hyb.png'
+elif net_style == 1:
     img_name = f'{img_save_path}/{data_id}_fconv{conv_nd}d.png'
-else:
+elif net_style == 0:
     img_name = f'{img_save_path}/{data_id}_conv{conv_nd}d.png'
 imsave(img_name, sample_img_conv)
 
