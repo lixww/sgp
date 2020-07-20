@@ -20,7 +20,8 @@ from utils import reconstruct_image
 
 
 data_class = 'allClass'
-data_id = '024r_029v'
+folio_ids = ['024r_029v', '102v_107r', '214v_221r']
+data_id = folio_ids[2]
 data_type = 'cropped_roi'
 conv_nd = 3
 is_fcnet = True

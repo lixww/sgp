@@ -248,11 +248,6 @@ class conv2d_net(nn.Module):
                         kernel_size=kernel_size, 
                         stride=1),
             nn.ReLU(),
-            # nn.Conv2d(kernel_num[0], kernel_num[1], 
-            #             kernel_size=kernel_size, 
-            #             stride=1, 
-            #             padding=int((kernel_size-1)*0.5)),
-            # nn.ReLU(),
         )
         fc_inp_dim = 1 * kernel_num[0]
         self.fc_inp_dim = fc_inp_dim
