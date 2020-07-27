@@ -131,10 +131,10 @@ imsave(f'{img_save_path}/{data_id}_orig.png', sample_img)
 
 sample_img_conv = reconstruct_image(sample_img, conv_pred, count_note=True)
 if net_style == 2:
-    img_name = f'{img_save_path}/{data_id}_conv{conv_nd}d_hyb.png'
+    img_name = f'{img_save_path}/conv{conv_nd}d_hyb/{data_id}_conv{conv_nd}d_hyb.png'
 elif net_style == 1:
-    img_name = f'{img_save_path}/{data_id}_fconv{conv_nd}d.png'
+    img_name = f'{img_save_path}/fconv{conv_nd}d/{data_id}_fconv{conv_nd}d.png'
 elif net_style == 0:
-    img_name = f'{img_save_path}/{data_id}_conv{conv_nd}d.png'
+    img_name = f'{img_save_path}/conv{conv_nd}d/{data_id}_conv{conv_nd}d.png'
 imsave(img_name, sample_img_conv)
 

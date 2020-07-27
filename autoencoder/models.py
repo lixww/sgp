@@ -257,13 +257,6 @@ class conv2d_net(nn.Module):
             nn.Linear(100, 10),
             nn.ReLU()
         )
-        self.conv_alex = nn.Sequential(
-            nn.Conv2d(kernel_num[0], 128, kernel_size=1),
-            nn.ReLU(),
-            nn.Dropout(),
-            nn.Conv2d(128, 128, kernel_size=1),
-            nn.AdaptiveMaxPool3d((output_dim, None, None))
-        )
         self.out_layer = nn.Linear(10, output_dim)
 
     
@@ -278,11 +271,6 @@ class conv2d_net(nn.Module):
         conv_out = conv_out.T
         fc_out = self.fc(conv_out)
         out = self.out_layer(fc_out)
-        # use conv_alex
-        # conv_out = torch.reshape(conv_out, conv_out.shape[1:])
-        # conv_alex_out = self.conv_alex(conv_out)
-        # out = torch.reshape(conv_alex_out, (self.out_dim, -1))
-        # out = out.T
         return out
 
 

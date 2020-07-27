@@ -20,7 +20,7 @@ data_type = 'cropped_roi'
 # file paths
 data_path = f'autoencoder/data/sgp/{data_id}/cropped_roi/*'
 model_path = 'autoencoder/model'
-img_save_path = 'autoencoder/reconstructed_roi'
+img_save_path = 'autoencoder/reconstructed_roi/ae'
 
 channel_len = 23
 
