@@ -535,12 +535,14 @@ class conv_hybrid(nn.Module):
         # residual learning
         resid_out = self.residual(conv_cat_out)
         # sum
-        sum_out = torch.add(resid_out, conv_cat_out)
+        # sum_out = torch.add(resid_out, conv_cat_out)
+        sum_out = resid_out
         sum_out = self.activat(sum_out)
         # residual learning
         resid_out = self.residual(sum_out)
         # sum
-        sum_out = torch.add(resid_out, sum_out)
+        # sum_out = torch.add(resid_out, sum_out)
+        sum_out = resid_out
         # conv as alexnet
         conv_alex_out = self.conv_alex(sum_out)
         out = torch.reshape(conv_alex_out, (-1, self.out_dim))

@@ -29,7 +29,7 @@ train_dataset, dev_dataset = split_dataset(full_dataset)
 
 # hyperparameter
 learning_rate = 1e-2
-num_epoch = 500
+num_epoch = 2000
 batch_size = 16
 
 
@@ -64,4 +64,5 @@ print_acc(model, train_dataset, print_note='train')
 print_acc(model, dev_dataset, print_note='validat')
 
 # save model
-torch.save(model.state_dict(), f'{model_path}/conv_hybrid_on_{data_class}.pth')
+# torch.save(model.state_dict(), f'{model_path}/conv_hybrid_on_{data_class}.pth')
+torch.save(model.state_dict(), f'{model_path}/conv_hybrid_no_res_on_{data_class}.pth')
