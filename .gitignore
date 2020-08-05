@@ -182,6 +182,9 @@ autoencoder/*.tif
 # model files
 model/
 
+# log files
+training_log/
+
 # vscode
 .vscode
 

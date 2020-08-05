@@ -265,6 +265,14 @@ def plot_roc(fpr:list, tpr:list, roc_area:list):
     plt.legend(loc="lower right")
     plt.show()
 
+def plot_loss_acc_one_model(df:pd.DataFrame):
+    ax = df.plot(x='epoch', y=['loss', 'acc'])
+    ax.locator_params(integer=True)
+    plt.axhline(y=1, color='red', alpha=0.6, linestyle='dashdot')
+    plt.show()
+
+def initialize_log_dataframe():
+    return pd.DataFrame(columns=['epoch', 'loss', 'acc'])
 
 
 def reconstruct_image(image, pxl_labels, enhance_intensity=20, count_note=False):

@@ -13,7 +13,8 @@ from utils import FolioDataset, load_images_data, reconstruct_image
 
 
 data_class = 'allClass'
-data_id = '102v_107r'
+folio_ids = ['024r_029v', '102v_107r', '214v_221r']
+data_id = folio_ids[2]
 data_type = 'cropped_roi'
 
 

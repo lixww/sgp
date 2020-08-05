@@ -17,7 +17,7 @@ data_class = 'allClass'
 folio_ids = ['024r_029v', '102v_107r', '214v_221r']
 data_id = folio_ids[0]
 data_type = 'cropped_roi'
-is_consider_residual = False
+is_consider_residual = True
 
 
 # file paths

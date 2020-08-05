@@ -425,7 +425,7 @@ class conv1d_net(nn.Module):
     def __init__(self, input_dim, output_dim):
         super(conv1d_net, self).__init__()
         self.inp_dim = input_dim
-        kernel_size = 7
+        kernel_size = 2
         kernel_num = 20
         
         self.conv = nn.Sequential(
@@ -433,11 +433,10 @@ class conv1d_net(nn.Module):
             nn.ReLU(),
             nn.MaxPool1d(2)
         )
-        fc_inp_dim = int((input_dim - kernel_size) * 0.5 * kernel_num)
+        fc_inp_dim = int((input_dim - kernel_size + 1) * 0.5 * kernel_num)
         self.fc_inp_dim = fc_inp_dim
         self.fc = nn.Sequential(
-            nn.Linear(fc_inp_dim, 100),
-            nn.ReLU()
+            nn.Linear(fc_inp_dim, 100)
         )
         self.out_layer = nn.Linear(100, output_dim)
 
@@ -535,14 +534,14 @@ class conv_hybrid(nn.Module):
         # residual learning
         resid_out = self.residual(conv_cat_out)
         # sum
-        # sum_out = torch.add(resid_out, conv_cat_out)
-        sum_out = resid_out
+        sum_out = torch.add(resid_out, conv_cat_out)
+        # sum_out = resid_out
         sum_out = self.activat(sum_out)
         # residual learning
         resid_out = self.residual(sum_out)
         # sum
-        # sum_out = torch.add(resid_out, sum_out)
-        sum_out = resid_out
+        sum_out = torch.add(resid_out, sum_out)
+        # sum_out = resid_out
         # conv as alexnet
         conv_alex_out = self.conv_alex(sum_out)
         out = torch.reshape(conv_alex_out, (-1, self.out_dim))
