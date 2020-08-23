@@ -2,12 +2,14 @@ import pandas as pd
 import numpy as np
 
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis as lda
+from sklearn.metrics import balanced_accuracy_score
+from sklearn.metrics import cohen_kappa_score
 
 from skimage.io import imsave
 
 from utils import load_raw_labeled_data
 from utils import load_raw_images_data, flatten_images, reconstruct_image
-
+from utils import plot_learning_curve
 
 
 data_id = '102v_107r'
@@ -15,7 +17,7 @@ data_type = 'cropped_roi'
 
 
 # file paths
-test_data_path = f'autoencoder/data/sgp/{data_id}/cropped_roi/*'
+test_data_path = f'autoencoder/data/sgp/{data_id}/{data_type}/*'
 img_save_path = 'autoencoder/reconstructed_roi/lda'
 
 
@@ -31,7 +33,15 @@ print('Model training..')
 classifier = lda()
 classifier.fit(channel_train, y_true)
 precision_clf = classifier.score(channel_train, y_true)
+prediction = classifier.predict(channel_train)
+balanced_acc = balanced_accuracy_score(y_true, prediction)
+kappa = cohen_kappa_score(y_true, prediction)
+# plot learning curve
+plot_learning_curve(classifier, 'learning curve of LDA', channel_train, y_true)
+
 print('train-accuracy: ', precision_clf)
+print('balanced-accuracy: ', balanced_acc)
+print('kappa: ', kappa)
 
 
 # prepare test data

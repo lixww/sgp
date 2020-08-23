@@ -1,5 +1,7 @@
 import pandas as pd
 
+import time
+
 from sklearn.model_selection import ShuffleSplit
 from sklearn.linear_model import LogisticRegression
 from sklearn import svm
@@ -15,21 +17,26 @@ from torchvision import transforms
 import models 
 from utils import FolioDataset, cal_accuracy_given_pred, plot_roc
 from utils import load_labeled_dataset, split_dataset
-
+from utils import load_images_data
 
 
 data_class = 'allClass'
+folio_ids = ['024r_029v', '102v_107r', '214v_221r']
+data_id = folio_ids[1]
 
 # file paths
 model_path = 'autoencoder/model'
+pre_train_data_path = f'autoencoder/data/sgp/{data_id}/cropped_roi/*'
 
 
 # prepare training set
-
 full_dataset, channel_len, _ = load_labeled_dataset()
 
 # split into train & develop_set
 train_dataset, dev_dataset = split_dataset(full_dataset)
+
+# training set for pre-train
+pre_train_dataset, sample_img = load_images_data(pre_train_data_path, rescale_ratio=0.25)
 
 
 # hyperparameter
@@ -54,13 +61,15 @@ num_epoch = 50
 pretrain_epoch = 40
 finetune_epoch = 60
 
+# log time
+start_time = time.time()
 
 autoencoder = models.sdae(
     dimensions=[channel_len, 10, 10, 20, 3]
 )
 print('Pretraining..')
 models.pretrain(
-    dataset=train_dataset,
+    dataset=pre_train_dataset,
     autoencoder=autoencoder,
     num_epoch=pretrain_epoch
 )
@@ -72,6 +81,9 @@ model = models.fine_tune(
     validation=dev_dataset,
     train_encoder_more=True
 )
+# time log
+print("--- %s seconds ---" % (time.time() - start_time))
+
 print('SVM')
 classifier = svm.SVC(decision_function_shape='ovo', gamma='auto')
 model.eval()

@@ -162,7 +162,7 @@ def pretrain(dataset: Dataset, autoencoder: sdae, num_epoch):
         if i < num_subae-1:
             current_dataset = encode(current_dataset, sub_ae)
 
-    # train_ae(dataset, autoencoder, num_epoch)
+    train_ae(dataset, autoencoder, num_epoch)
 
 
 def encode(dataset: Dataset, autoencoder: nn.Module):
@@ -189,7 +189,7 @@ def encode(dataset: Dataset, autoencoder: nn.Module):
 
 def fine_tune(dataset: Dataset, autoencoder: sdae, num_epoch, 
                 validation=None, train_encoder_more=True):
-    train_ae(dataset, autoencoder, num_epoch)
+    # train_ae(dataset, autoencoder, num_epoch)
     if not train_encoder_more:
         return autoencoder
     model = sdae_lr(autoencoder)
@@ -233,8 +233,74 @@ class sdae_lr(nn.Module):
         return self.hidden(inp)
 
 
+class cae(nn.Module):
+    ''' convolutional autoencoder (1d-conv) '''
+    def __init__(self, input_dim):
+        super(cae, self).__init__()
+        self.inp_dim = input_dim
+        self.encoder = nn.Sequential(
+            nn.Conv1d(1, 128, kernel_size=2, stride=1),
+            nn.MaxPool1d(2, return_indices=True),
+            nn.ReLU(),
+            nn.Conv1d(128, 64, kernel_size=2, stride=1),
+            nn.MaxPool1d(2, return_indices=True),
+            nn.ReLU(),
+            nn.Conv1d(64, 32, kernel_size=2, stride=1),
+            nn.MaxPool1d(2, return_indices=True),
+            nn.ReLU(),
+            nn.Conv1d(32, 3, kernel_size=2, stride=1),
+            nn.ReLU(),
+        )
+        self.decoder = nn.Sequential(
+            nn.ConvTranspose1d(3, 32, kernel_size=2, stride=1),
+            nn.ReLU(),
+            nn.MaxUnpool1d(2),
+            nn.ConvTranspose1d(32, 64, kernel_size=2, stride=1),
+            nn.ReLU(),
+            nn.MaxUnpool1d(2),
+            nn.ConvTranspose1d(64, 128, kernel_size=2, stride=1),
+            nn.ReLU(),
+            nn.MaxUnpool1d(2),
+            nn.ConvTranspose1d(128, 1, kernel_size=2, stride=1),
+            nn.ReLU(),
+        )
+
+    def forward(self, inp):
+        pool_idx = []
+        encode_inp = torch.reshape(inp, (-1, 1, self.inp_dim))
+        for layer in self.encoder:
+            if isinstance(layer, nn.MaxPool1d):
+                encode_out, indices = layer(encode_inp)
+                pool_idx.append(indices)
+            else:
+                encode_out = layer(encode_inp)
+            encode_inp = encode_out
+        idx = -1
+        decode_inp = encode_out
+        for layer in self.decoder:
+            if isinstance(layer, nn.MaxUnpool1d):
+                decode_out = layer(decode_inp, pool_idx[idx])
+                idx -= 1
+            else:
+                decode_out = layer(decode_inp)
+            decode_inp = decode_out
+        return decode_out
+
+    def encoding(self, inp):
+        encode_inp = torch.reshape(inp, (-1, 1, self.inp_dim))
+        for layer in self.encoder:
+            if isinstance(layer, nn.MaxPool1d):
+                encode_out, _ = layer(encode_inp)
+            else:
+                encode_out = layer(encode_inp)
+            encode_inp = encode_out
+        return encode_out
+
+
+
 class conv2d_net(nn.Module):
-    ''' 2d conv over spatial domain '''
+    ''' 2d conv over spatial domain
+        conv + interpolation + fc '''
 
     def __init__(self, input_dim, input_w, input_h, output_dim):
         super(conv2d_net, self).__init__()
@@ -275,7 +341,8 @@ class conv2d_net(nn.Module):
 
 
 class fconv2d_net(nn.Module):
-    ''' 2d fully conv over spatial domain '''
+    ''' 2d fully conv over spatial domain
+        conv + transp_conv (learnable upsampling) + conv_alex (fully conv) '''
 
     def __init__(self, input_dim, input_w, input_h, output_dim):
         super(fconv2d_net, self).__init__()
@@ -314,7 +381,8 @@ class fconv2d_net(nn.Module):
 
 
 class conv3d_net(nn.Module):
-    ''' 3d conv over spectral-spatial domain'''
+    ''' 3d conv over spectral-spatial domain
+        conv + interpolation + fc '''
 
     def __init__(self, input_dim, input_w, input_h, output_dim):
         super(conv3d_net, self).__init__()
@@ -347,7 +415,8 @@ class conv3d_net(nn.Module):
         return out
 
 class conv3d_hyb_net(nn.Module):
-    ''' 3d conv + fully connected '''
+    ''' 3d conv + fully connected
+        conv + transp_conv (learnable upsampling) + fc '''
 
     def __init__(self, input_dim, input_w, input_h, output_dim):
         super(conv3d_hyb_net, self).__init__()
@@ -382,7 +451,8 @@ class conv3d_hyb_net(nn.Module):
 
 
 class fconv3d_net(nn.Module):
-    ''' 3d fully conv over spectral-spatial domain'''
+    ''' 3d fully conv over spectral-spatial domain
+        conv + transp_conv (learnable upsampling) + conv_alex (fully conv) '''
 
     def __init__(self, input_dim, input_w, input_h, output_dim):
         super(fconv3d_net, self).__init__()
@@ -427,13 +497,17 @@ class conv1d_net(nn.Module):
         self.inp_dim = input_dim
         kernel_size = 2
         kernel_num = 20
+        conv_layer_num = 2
         
         self.conv = nn.Sequential(
             nn.Conv1d(1, kernel_num, kernel_size=kernel_size, stride=1),
             nn.ReLU(),
+            # nn.Conv1d(kernel_num, kernel_num, kernel_size=kernel_size, stride=1),
+            # nn.ReLU(),
             nn.MaxPool1d(2)
         )
         fc_inp_dim = int((input_dim - kernel_size + 1) * 0.5 * kernel_num)
+        # fc_inp_dim = int((input_dim - kernel_size*conv_layer_num + conv_layer_num) * kernel_num)
         self.fc_inp_dim = fc_inp_dim
         self.fc = nn.Sequential(
             nn.Linear(fc_inp_dim, 100)
@@ -644,7 +718,9 @@ def cal_accuracy(dataset: Dataset, model):
         for data in dataloader:
             inp = data[1]
             truth = data[2]
-            if hasattr(model, 'encoder'):
+            if hasattr(model, 'encoding'):
+                output = model.encoding(inp)
+            elif hasattr(model, 'encoder'):
                 output = model.encoder(inp)
             else:
                 output = model(inp)

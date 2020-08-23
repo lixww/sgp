@@ -15,7 +15,7 @@ from utils import load_patch_dataset_from_imgs, pad_prediction
 
 data_class = 'allClass'
 folio_ids = ['024r_029v', '102v_107r', '214v_221r']
-data_id = folio_ids[0]
+data_id = folio_ids[2]
 data_type = 'cropped_roi'
 is_consider_residual = True
 

@@ -12,6 +12,7 @@ from utils import plot_roc
 from utils import load_patch_dataset, split_dataset
 from utils import initialize_log_dataframe
 
+import time
 
 
 data_class = 'allClass'
@@ -34,7 +35,7 @@ train_dataset, dev_dataset = split_dataset(full_dataset)
 # hyperparameter
 learning_rate = 1e-2
 num_epoch = 2000
-batch_size = 16
+batch_size = 256
 
 
 model = models.conv_hybrid(channel_len, 3)
@@ -45,6 +46,8 @@ model.train()
 dataloader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
 # log loss & acc in dataframe
 log_df = initialize_log_dataframe()
+# log time
+start_time = time.time()
 
 for epoch in range(num_epoch):
     for data in dataloader:
@@ -58,11 +61,13 @@ for epoch in range(num_epoch):
         optimizer.step()
 
     # log
-    acc = models.cal_accuracy(train_dataset, model)
+    acc = models.cal_accuracy(dev_dataset, model)
     print('epoch [{}/{}], loss:{:.4f}, accuracy:{:.4f}' 
         .format(epoch + 1, num_epoch, loss.data.item(), acc))
     log_df.loc[epoch] = [epoch + 1, loss.data.item(), acc]
 
+# time log
+print("--- %s seconds ---" % (time.time() - start_time))
 # save log df
 if is_consider_residual:
     log_df.to_pickle(f'{log_path}/conv_hybrid_loss_acc_log.pkl')

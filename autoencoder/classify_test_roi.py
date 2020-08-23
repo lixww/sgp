@@ -13,7 +13,8 @@ from utils import FolioDataset, load_images_data, reconstruct_image
 
 
 data_class = 'allClass'
-data_id = '102v_107r'
+folio_ids = ['024r_029v', '102v_107r', '214v_221r']
+data_id = folio_ids[0]
 data_type = 'cropped_roi'
 
 
@@ -47,4 +48,4 @@ predictions = models.predict_class(test_dataset, model)
 
 print('Reconstruct..')
 sample_img = reconstruct_image(sample_img, predictions)
-imsave(f'{img_save_path}/{data_id}.png', sample_img)
+imsave(f'{img_save_path}/{data_id}_2trainset_moreEpochs.png', sample_img)

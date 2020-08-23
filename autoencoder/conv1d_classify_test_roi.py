@@ -14,12 +14,12 @@ from utils import FolioDataset, load_images_data, reconstruct_image
 
 data_class = 'allClass'
 folio_ids = ['024r_029v', '102v_107r', '214v_221r']
-data_id = folio_ids[2]
+data_id = folio_ids[1]
 data_type = 'cropped_roi'
 
 
 # file paths
-data_path = f'autoencoder/data/sgp/{data_id}/cropped_roi/*'
+data_path = f'autoencoder/data/sgp/{data_id}/{data_type}/*'
 model_path = 'autoencoder/model'
 img_save_path = 'autoencoder/reconstructed_roi/conv1d'
 

@@ -51,7 +51,7 @@ for epoch in range(num_epoch):
         optimizer.step()
 
     # log
-    acc = models.cal_accuracy(train_dataset, model)
+    acc = models.cal_accuracy(dev_dataset, model)
     print('epoch [{}/{}], loss:{:.4f}, accuracy:{:.4f}' 
         .format(epoch + 1, num_epoch, loss.data.item(), acc))
 

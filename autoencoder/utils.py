@@ -11,10 +11,9 @@ from skimage.transform import rescale
 
 from sklearn.preprocessing import normalize
 from sklearn.metrics import precision_score
+from sklearn.model_selection import learning_curve
 
 import matplotlib.pyplot as plt
-
-
 
 
 class FolioDataset(Dataset):
@@ -142,7 +141,7 @@ def load_labeled_dataset(data_path='autoencoder/data/sgp/training_file_8_bit.csv
     return full_dataset, channel_len, data_idx
 
 
-def split_dataset(full_dataset:Dataset, split_ratio=0.9):
+def split_dataset(full_dataset:Dataset, split_ratio=0.7):
     # split into train & develop_set
     train_size = int(split_ratio * len(full_dataset))
     dev_size = len(full_dataset) - train_size
@@ -267,11 +266,14 @@ def plot_roc(fpr:list, tpr:list, roc_area:list):
 
 def plot_loss_acc_one_model(df:pd.DataFrame):
     ax = df.plot(x='epoch', y=['loss', 'acc'])
+    # ax = df.plot(x='epoch', y=['loss', 'acc_train', 'acc_dev'])
     ax.locator_params(integer=True)
     plt.axhline(y=1, color='red', alpha=0.6, linestyle='dashdot')
+    plt.axhline(y=0.9, color='red', alpha=0.6, linestyle='dashdot')
     plt.show()
 
 def initialize_log_dataframe():
+    # return pd.DataFrame(columns=['epoch', 'loss', 'acc_train', 'acc_dev'])
     return pd.DataFrame(columns=['epoch', 'loss', 'acc'])
 
 
@@ -316,3 +318,35 @@ def pad_prediction(preds, sample_img, patch_size):
     preds = torch.reshape(torch.LongTensor(preds), (-1,))
 
     return preds
+
+
+def plot_learning_curve(estimator, title, X, y, axes=None, ylim=None, cv=None,
+                        n_jobs=None, train_sizes=np.linspace(.1, 1.0, 5)):
+
+    if axes is None:
+        _, axes = plt.subplots()
+
+    axes.set_title(title)
+    if ylim is not None:
+        axes.set_ylim(*ylim)
+
+    train_sizes, train_scores, test_scores, fit_times, _ = \
+        learning_curve(estimator, X, y, cv=cv, n_jobs=n_jobs,
+                       train_sizes=train_sizes, return_times=True)
+    train_scores_mean = np.mean(train_scores, axis=1)
+    train_scores_std = np.std(train_scores, axis=1)
+    test_scores_mean = np.mean(test_scores, axis=1)
+    test_scores_std = np.std(test_scores, axis=1)
+    fit_times_mean = np.mean(fit_times, axis=1)
+    fit_times_std = np.std(fit_times, axis=1)
+
+    # Plot fit_time vs score
+    axes.grid()
+    axes.plot(fit_times_mean, test_scores_mean, 'o-')
+    axes.fill_between(fit_times_mean, test_scores_mean - test_scores_std,
+                         test_scores_mean + test_scores_std, alpha=0.1)
+    axes.set_xlabel("Training_times (sec)")
+    axes.set_ylabel("Accuracy")
+    axes.set_title(title)
+
+    plt.show()
