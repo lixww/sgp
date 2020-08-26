@@ -21,8 +21,8 @@ from utils import reconstruct_image, get_sample_image
 
 data_class = 'allClass'
 folio_ids = ['024r_029v', '102v_107r', '214v_221r']
-model_data_id = folio_ids[2]
-data_id = '214v_221r'
+model_data_id = folio_ids[1]
+data_id = folio_ids[1]
 data_type = 'cropped_roi'
 conv_nd = 3
 # net_style {'normal': 0, 'tconv': 1, 'hybrid': 2}

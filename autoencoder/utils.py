@@ -268,8 +268,10 @@ def plot_loss_acc_one_model(df:pd.DataFrame):
     ax = df.plot(x='epoch', y=['loss', 'acc'])
     # ax = df.plot(x='epoch', y=['loss', 'acc_train', 'acc_dev'])
     ax.locator_params(integer=True)
+    ax.grid()
     plt.axhline(y=1, color='red', alpha=0.6, linestyle='dashdot')
     plt.axhline(y=0.9, color='red', alpha=0.6, linestyle='dashdot')
+    plt.ylim([0.0, 1.3])
     plt.show()
 
 def initialize_log_dataframe():

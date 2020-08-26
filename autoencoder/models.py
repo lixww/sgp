@@ -339,6 +339,46 @@ class conv2d_net(nn.Module):
         out = self.out_layer(fc_out)
         return out
 
+class conv2d_hyb_net(nn.Module):
+    ''' 2d conv + fully connected
+        conv + transp_conv (learnable upsampling) + fc '''
+    def __init__(self, input_dim, input_w, input_h, output_dim):
+        super(conv2d_hyb_net, self).__init__()
+        self.inp_w = input_w
+        self.inp_h = input_h
+        self.out_dim = output_dim
+        kernel_size = 5
+        kernel_num = 20
+        self.conv = nn.Sequential(
+            nn.Conv2d(input_dim, kernel_num, 
+                        kernel_size=kernel_size, 
+                        stride=1),
+            nn.ReLU(),
+        )
+        self.transp_conv = nn.Sequential(
+            nn.ConvTranspose2d(kernel_num, input_dim,
+                                kernel_size=kernel_size,
+                                stride=1),
+            nn.ReLU(),
+        )
+        fc_inp_dim = input_dim
+        self.fc_inp_dim = fc_inp_dim
+        self.fc = nn.Sequential(
+            nn.Linear(fc_inp_dim, 100),
+        )
+        self.out_layer = nn.Linear(100, output_dim)
+
+    def forward(self, inp):
+        inp = torch.reshape(inp, (1, -1, self.inp_h, self.inp_w))
+        conv_out = self.conv(inp)
+        transp_conv_out = self.transp_conv(conv_out)
+        # use normal fc
+        transp_conv_out = torch.reshape(transp_conv_out, (self.fc_inp_dim, -1))
+        transp_conv_out = transp_conv_out.T
+        fc_out = self.fc(transp_conv_out)
+        out = self.out_layer(fc_out)
+        return out
+
 
 class fconv2d_net(nn.Module):
     ''' 2d fully conv over spatial domain
@@ -472,9 +512,9 @@ class fconv3d_net(nn.Module):
             nn.ReLU(),
             nn.Dropout(),
             nn.Conv3d(128, 128, kernel_size=1),
-            nn.AdaptiveMaxPool3d((1, None, None))
+            nn.AdaptiveMaxPool3d((output_dim, None, None))
         )
-        self.out_layer = nn.AdaptiveMaxPool3d((output_dim, None, None))
+        # self.out_layer = nn.AdaptiveMaxPool3d((output_dim, None, None))
 
 
     def forward(self, inp):
@@ -483,8 +523,8 @@ class fconv3d_net(nn.Module):
         transp_conv_out = self.transp_conv(conv_out)
         conv_alex_out = self.conv_alex(transp_conv_out)
         conv_alex_out = torch.reshape(conv_alex_out, (1, 1, -1, self.inp_h, self.inp_w))
-        out = self.out_layer(conv_alex_out)
-        out = torch.reshape(out, (self.out_dim, -1))
+        # out = self.out_layer(conv_alex_out)
+        out = torch.reshape(conv_alex_out, (self.out_dim, -1))
         out = out.T
         return out
 
@@ -495,16 +535,19 @@ class conv1d_net(nn.Module):
     def __init__(self, input_dim, output_dim):
         super(conv1d_net, self).__init__()
         self.inp_dim = input_dim
+        # [1,2,3,5,7]
         kernel_size = 2
+        # [20,32,64,128,256]
         kernel_num = 20
+        # [2,3,5,7,9]
         conv_layer_num = 2
         
         self.conv = nn.Sequential(
             nn.Conv1d(1, kernel_num, kernel_size=kernel_size, stride=1),
             nn.ReLU(),
-            # nn.Conv1d(kernel_num, kernel_num, kernel_size=kernel_size, stride=1),
-            # nn.ReLU(),
-            nn.MaxPool1d(2)
+            nn.Conv1d(kernel_num, kernel_num, kernel_size=kernel_size, stride=kernel_size),
+            nn.ReLU(),
+            # nn.MaxPool1d(2)
         )
         fc_inp_dim = int((input_dim - kernel_size + 1) * 0.5 * kernel_num)
         # fc_inp_dim = int((input_dim - kernel_size*conv_layer_num + conv_layer_num) * kernel_num)
