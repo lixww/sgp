@@ -10,7 +10,7 @@ Pytorch 1.4.0
 ### Results preview (on cropped Tiff * rescale-0.25)
 Images of 024r_029v
 <br />
-Original version, LDA version, AE-enhanced version, Conv-1d, FConv-2d, Conv-3d-hyb, Conv-hybrid:
+Original version, LDA version, AE-enhanced version, 1DConvNet, 2DFConvNet, 3DConvNet-hyb, Conv-hybrid:
 <br />
 <img src='/figs/results_preview/024r_029v_orig_eval.png' width='100'>
 <img src='/figs/results_preview/024r_029v_lda.png' width='100'>
@@ -23,7 +23,7 @@ Original version, LDA version, AE-enhanced version, Conv-1d, FConv-2d, Conv-3d-h
 
 Images of 102v_107r
 <br />
-Original version, LDA version, AE-enhanced version, Conv-1d, Conv-2d, Conv-3d, Conv-hybrid:
+Original version, LDA version, AE-enhanced version, 1DConvNet, 2DFConvNet, 3DConvNet-hyb, Conv-hybrid:
 <br />
 <img src='/figs/results_preview/102v_107r_orig_eval.png' width='100'>
 <img src='/figs/results_preview/102v_107r_lda.png' width='100'>
@@ -36,7 +36,7 @@ Original version, LDA version, AE-enhanced version, Conv-1d, Conv-2d, Conv-3d, C
 
 Images of 214v_221r
 <br />
-Original version, LDA version, AE-enhanced version, Conv-1d, Conv-2d, Conv-3d, Conv-hybrid:
+Original version, LDA version, AE-enhanced version, 1DConvNet, 2DFConvNet, 3DConvNet-hyb, Conv-hybrid:
 <br />
 <img src='/figs/results_preview/214v_221r_orig_eval.png' width='100'>
 <img src='/figs/results_preview/214v_221r_lda.png' width='100'>
