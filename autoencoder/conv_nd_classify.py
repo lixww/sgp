@@ -17,24 +17,25 @@ import models
 from utils import FolioDataset, load_images_data, load_raw_images_data
 from utils import reconstruct_image
 from utils import initialize_log_dataframe
+from utils import plot_loss_acc_one_model
 
 import time
 
 
 data_class = 'allClass'
 folio_ids = ['024r_029v', '102v_107r', '214v_221r']
-data_id = folio_ids[1]
+data_id = folio_ids[2]
 data_type = 'cropped_roi'
 conv_nd = 2
-# net_style {'normal': 0, 'tconv': 1, 'hybrid': 2}
-net_style = 2
+# net_style {'normal': 0, 'fconv': 1, 'hybrid': 2}
+net_style = 0
 
 
 # file paths
 data_path = f'autoencoder/data/sgp/{data_id}/cropped_roi/*'
 model_path = 'autoencoder/model'
 img_save_path = 'autoencoder/reconstructed_roi'
-log_path = 'autoencoder/training_log'
+log_path = f'autoencoder/training_log/conv{conv_nd}ds/sgd'
 
 
 # load training data
@@ -76,7 +77,7 @@ ae_pred_norm = torch.FloatTensor(normalize(torch.reshape(ae_pred,(1,-1)), norm='
 print('Train conv net..')
 
 num_epochs = 300
-learning_rate = 1e-2
+learning_rate = 1e-3
 
 if net_style == 2:
     if conv_nd == 2:
@@ -94,8 +95,8 @@ elif net_style == 0:
     elif conv_nd == 3:
         conv_model = models.conv3d_net(channel_len, img_width, img_height, 3)
 criterion = nn.CrossEntropyLoss()
-# optimizer = optim.SGD(conv_model.parameters(), lr=learning_rate, momentum=0.9)
-optimizer = optim.Adam(conv_model.parameters(), lr=learning_rate, weight_decay=1e-5)
+optimizer = optim.SGD(conv_model.parameters(), lr=learning_rate, momentum=0.9)
+# optimizer = optim.Adam(conv_model.parameters(), lr=learning_rate, weight_decay=1e-5)
 conv_model.train()
 
 # log loss & acc in dataframe
@@ -154,4 +155,7 @@ elif net_style == 1:
 elif net_style == 0:
     img_name = f'{img_save_path}/conv{conv_nd}d/{data_id}_conv{conv_nd}d.png'
 imsave(img_name, sample_img_conv)
+
+# plot learning curve
+plot_loss_acc_one_model(log_df)
 

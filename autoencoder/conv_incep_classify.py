@@ -10,7 +10,9 @@ from torch.utils.data import DataLoader, random_split
 import models 
 from utils import plot_roc
 from utils import load_patch_dataset, split_dataset
+from utils import initialize_log_dataframe, plot_loss_acc_one_model
 
+import time
 
 
 data_class = 'allClass'
@@ -18,7 +20,7 @@ data_class = 'allClass'
 # file paths
 model_path = 'autoencoder/model'
 data_path = 'autoencoder/data/sgp/folio_8_bit_extended_3x3.csv'
-
+log_path = 'autoencoder/training_log'
 
 # prepare training set
 full_dataset, channel_len = load_patch_dataset(data_path=data_path)
@@ -29,7 +31,7 @@ train_dataset, dev_dataset = split_dataset(full_dataset)
 
 # hyperparameter
 learning_rate = 1e-2
-num_epoch = 500
+num_epoch = 100
 batch_size = 16
 
 
@@ -39,6 +41,10 @@ optimizer = optim.SGD(model.parameters(), lr=learning_rate, momentum=0.9)
 model.train()
 
 dataloader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
+# log loss & acc in dataframe
+log_df = initialize_log_dataframe()
+# log time
+start_time = time.time()
 
 for epoch in range(num_epoch):
     for data in dataloader:
@@ -55,6 +61,13 @@ for epoch in range(num_epoch):
     acc = models.cal_accuracy(dev_dataset, model)
     print('epoch [{}/{}], loss:{:.4f}, accuracy:{:.4f}' 
         .format(epoch + 1, num_epoch, loss.data.item(), acc))
+    log_df.loc[epoch] = [epoch + 1, loss.data.item(), acc]
+
+# time log
+print("--- %s seconds ---" % (time.time() - start_time))
+# save log df
+log_df.to_pickle(f'{log_path}/conv_incep_loss_acc_log.pkl')
+
 
 def print_acc(model, dataset, print_note=''):
     acc = models.cal_accuracy(dataset, model)
@@ -65,3 +78,5 @@ print_acc(model, dev_dataset, print_note='validat')
 
 # save model
 torch.save(model.state_dict(), f'{model_path}/conv_incep_on_{data_class}.pth')
+
+plot_loss_acc_one_model(log_df)

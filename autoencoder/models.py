@@ -308,22 +308,19 @@ class conv2d_net(nn.Module):
         self.inp_h = input_h
         self.out_dim = output_dim
         kernel_size = 5
-        kernel_num = (20,)
+        kernel_num = 20
         self.conv = nn.Sequential(
-            nn.Conv2d(input_dim, kernel_num[0], 
+            nn.Conv2d(input_dim, kernel_num, 
                         kernel_size=kernel_size, 
                         stride=1),
             nn.ReLU(),
         )
-        fc_inp_dim = 1 * kernel_num[0]
+        fc_inp_dim = 1 * kernel_num
         self.fc_inp_dim = fc_inp_dim
         self.fc = nn.Sequential(
             nn.Linear(fc_inp_dim, 100),
-            nn.ReLU(),
-            nn.Linear(100, 10),
-            nn.ReLU()
         )
-        self.out_layer = nn.Linear(10, output_dim)
+        self.out_layer = nn.Linear(100, output_dim)
 
     
     def forward(self, inp):
@@ -354,8 +351,16 @@ class conv2d_hyb_net(nn.Module):
                         kernel_size=kernel_size, 
                         stride=1),
             nn.ReLU(),
+            # nn.Conv2d(kernel_num, kernel_num, 
+            #             kernel_size=kernel_size, 
+            #             stride=1),
+            # nn.ReLU(),
         )
         self.transp_conv = nn.Sequential(
+            # nn.ConvTranspose2d(kernel_num, kernel_num,
+            #                     kernel_size=kernel_size,
+            #                     stride=1),
+            # nn.ReLU(),
             nn.ConvTranspose2d(kernel_num, input_dim,
                                 kernel_size=kernel_size,
                                 stride=1),
@@ -381,7 +386,7 @@ class conv2d_hyb_net(nn.Module):
 
 
 class fconv2d_net(nn.Module):
-    ''' 2d fully conv over spatial domain
+    ''' 2d fully alex-sytle conv over spatial domain
         conv + transp_conv (learnable upsampling) + conv_alex (fully conv) '''
 
     def __init__(self, input_dim, input_w, input_h, output_dim):
@@ -390,32 +395,36 @@ class fconv2d_net(nn.Module):
         self.inp_h = input_h
         self.out_dim = output_dim
         kernel_size = 5
-        kernel_num = (20,)
+        kernel_num = 20
         self.conv = nn.Sequential(
-            nn.Conv2d(input_dim, kernel_num[0], 
+            nn.Conv2d(input_dim, kernel_num, 
                         kernel_size=kernel_size, 
                         stride=1),
             nn.ReLU(),
-        )
-        self.transp_conv = nn.ConvTranspose2d(kernel_num[0], input_dim,
-                                                kernel_size=kernel_size,
-                                                stride=1)
-        self.conv_alex = nn.Sequential(
-            nn.Conv2d(input_dim, 128, kernel_size=1),
+            nn.LocalResponseNorm(3, k=2),
+            nn.Conv2d(kernel_num, kernel_num, 
+                        kernel_size=kernel_size, 
+                        stride=1),
+            nn.ReLU(),
+            nn.LocalResponseNorm(3, k=2),
+            nn.ConvTranspose2d(kernel_num, kernel_num, 
+                        kernel_size=kernel_size, 
+                        stride=1),
             nn.ReLU(),
             nn.Dropout(),
-            nn.Conv2d(128, 128, kernel_size=1),
+            nn.ConvTranspose2d(kernel_num, input_dim, 
+                        kernel_size=kernel_size, 
+                        stride=1),
+            nn.ReLU(),
+            nn.Dropout(),
+            nn.Conv2d(input_dim, 128, kernel_size=1),
             nn.AdaptiveMaxPool3d((output_dim, None, None))
         )
-
     
     def forward(self, inp):
         inp = torch.reshape(inp, (1, -1, self.inp_h, self.inp_w))
         conv_out = self.conv(inp)
-        transp_conv_out = self.transp_conv(conv_out)
-        # use conv_alex
-        conv_alex_out = self.conv_alex(transp_conv_out)
-        out = torch.reshape(conv_alex_out, (self.out_dim, -1))
+        out = torch.reshape(conv_out, (self.out_dim, -1))
         out = out.T
         return out
 
@@ -439,8 +448,7 @@ class conv3d_net(nn.Module):
         fc_inp_dim = kernel_num * input_dim
         self.fc_inp_dim = fc_inp_dim
         self.fc = nn.Sequential(
-            nn.Linear(fc_inp_dim, 100),
-            nn.ReLU()
+            nn.Linear(fc_inp_dim, 100)
         )
         self.out_layer = nn.Linear(100, output_dim)
 
@@ -475,7 +483,6 @@ class conv3d_hyb_net(nn.Module):
         self.fc_inp_dim = fc_inp_dim
         self.fc = nn.Sequential(
             nn.Linear(fc_inp_dim, 100),
-            nn.ReLU()
         )
         self.out_layer = nn.Linear(100, output_dim)
 
@@ -503,28 +510,33 @@ class fconv3d_net(nn.Module):
         kernel_num = 20
 
         self.conv = nn.Sequential(
-            nn.Conv3d(1, kernel_num, kernel_size=kernel_size, stride=1),
-            nn.ReLU()
-        )
-        self.transp_conv = nn.ConvTranspose3d(kernel_num, 1, kernel_size=kernel_size, stride=1)
-        self.conv_alex = nn.Sequential(
-            nn.Conv3d(1, 128, kernel_size=1),
+            nn.Conv3d(1, kernel_num, 
+                        kernel_size=kernel_size, 
+                        stride=1),
+            nn.ReLU(),
+            nn.LocalResponseNorm(3, k=2),
+            nn.Conv3d(kernel_num, kernel_num, 
+                        kernel_size=kernel_size, 
+                        stride=1),
+            nn.ReLU(),
+            nn.LocalResponseNorm(3, k=2),
+            nn.ConvTranspose3d(kernel_num, kernel_num, kernel_size=kernel_size, stride=1),
             nn.ReLU(),
             nn.Dropout(),
-            nn.Conv3d(128, 128, kernel_size=1),
-            nn.AdaptiveMaxPool3d((output_dim, None, None))
+            nn.ConvTranspose3d(kernel_num, 1, kernel_size=kernel_size, stride=1),
+            nn.ReLU(),
+            nn.Dropout(),
+            nn.Conv3d(1, 128, kernel_size=1),
         )
-        # self.out_layer = nn.AdaptiveMaxPool3d((output_dim, None, None))
+        self.out_layer = nn.AdaptiveMaxPool3d((output_dim, None, None))
 
 
     def forward(self, inp):
         inp = torch.reshape(inp, (1, 1, -1, self.inp_h, self.inp_w))
         conv_out = self.conv(inp)
-        transp_conv_out = self.transp_conv(conv_out)
-        conv_alex_out = self.conv_alex(transp_conv_out)
-        conv_alex_out = torch.reshape(conv_alex_out, (1, 1, -1, self.inp_h, self.inp_w))
-        # out = self.out_layer(conv_alex_out)
-        out = torch.reshape(conv_alex_out, (self.out_dim, -1))
+        conv_out = torch.reshape(conv_out, (1, 1, -1, self.inp_h, self.inp_w))
+        out = self.out_layer(conv_out)
+        out = torch.reshape(out, (self.out_dim, -1))
         out = out.T
         return out
 
@@ -676,6 +688,7 @@ class conv_incep(nn.Module):
         incep_output_dim = 128
         self.inception1 = nn.Sequential(
             nn.Conv2d(input_dim, incep_output_dim, kernel_size=1),
+            # 3x3, 5x5
             nn.MaxPool2d(3)
         )
         self.inception2 = nn.Conv2d(input_dim, incep_output_dim, kernel_size=3)
@@ -684,9 +697,10 @@ class conv_incep(nn.Module):
             nn.LocalResponseNorm(3, k=2),
             nn.Conv2d(incep_output_dim*2, 128, kernel_size=1),
             nn.ReLU(),
-            nn.LocalResponseNorm(3, k=2)
+            nn.LocalResponseNorm(3, k=2),
         )
         self.conv_alex = nn.Sequential(
+            nn.Conv2d(128, 128, kernel_size=1),
             nn.ReLU(),
             nn.Dropout(),
             nn.Conv2d(128, 128, kernel_size=1),

@@ -19,7 +19,7 @@ data_class = 'allClass'
 
 # file paths
 model_path = 'autoencoder/model'
-log_path = 'autoencoder/training_log'
+log_path = 'autoencoder/training_log/conv1d'
 
 
 # prepare training set
@@ -28,7 +28,7 @@ full_dataset, channel_len, _ = load_labeled_dataset()
 # hyperparameter
 learning_rate = 1e-2
 num_epoch = 60
-cv_round = 5
+cv_round = 1
 
 
 model = models.conv1d_net(channel_len, 3)
@@ -82,7 +82,7 @@ plot_roc([fpr_train, fpr_dev], [tpr_train, tpr_dev], [rocauc_train, rocauc_dev])
 # save model
 torch.save(model.state_dict(), f'{model_path}/conv1d_on_{data_class}.pth')
 # save log df
-log_df.to_pickle(f'{log_path}/conv1d_loss_acc_log.pkl')
+log_df.to_pickle(f'{log_path}/conv1d_loss_acc_log_sgd.pkl')
 
 # plot loss & acc
 plot_loss_acc_one_model(log_df)

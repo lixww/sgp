@@ -141,7 +141,7 @@ def load_labeled_dataset(data_path='autoencoder/data/sgp/training_file_8_bit.csv
     return full_dataset, channel_len, data_idx
 
 
-def split_dataset(full_dataset:Dataset, split_ratio=0.7):
+def split_dataset(full_dataset:Dataset, split_ratio=0.8):
     # split into train & develop_set
     train_size = int(split_ratio * len(full_dataset))
     dev_size = len(full_dataset) - train_size

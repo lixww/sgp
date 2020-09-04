@@ -34,7 +34,7 @@ train_dataset, dev_dataset = split_dataset(full_dataset)
 
 # hyperparameter
 learning_rate = 1e-2
-num_epoch = 2000
+num_epoch = 500
 batch_size = 256
 
 

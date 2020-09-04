@@ -27,6 +27,24 @@ data_idx = training_file.index
 
 channel_len = len(channel_head)
 
+# %%
+# statistics
+y_o = 0
+y_b = 0
+y_u = 0
+for y in y_true:
+    if y == 0:
+        y_o += 1
+    elif y == 1:
+        y_b += 1
+    elif y == 2:
+        y_u += 1
+
+print('overtext: ', y_o)
+print('background: ', y_b)
+print('undertext: ', y_u)
+print('overall:', y_true.shape)
+
 
 # %%
 # plot locations

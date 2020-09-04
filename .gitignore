@@ -193,3 +193,5 @@ reference/
 
 # others
 md_generator.py
+concate_images.py
+plot_loss_acc.py

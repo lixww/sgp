@@ -16,25 +16,33 @@ from utils import plot_loss_acc_one_model
 
 
 
-data_class = 'allClass'
-folio_ids = ['024r_029v', '102v_107r', '214v_221r']
-data_id = folio_ids[0]
-data_type = 'cropped_roi'
-
-
 # file paths
 # [conv1d-depth, conv1d-depth-vs-kernel, conv1d-kernel, conv1d-width]
-log_path = 'autoencoder/training_log/wo_cv'
+log_path = 'autoencoder/training_log/conv2ds/expandable'
 
 # compare two models
 def plot_two_models():
     # load llog dataframe
-    log_df1 = pd.read_pickle(f'{log_path}/conv_hybrid_loss_acc_log.pkl')
-    log_df2 = pd.read_pickle(f'{log_path}/conv_hybrid_no_res_loss_acc_log.pkl')
+    log_df1 = pd.read_pickle(f'{log_path}/conv2d_hyb_on_allClass_102v_107r.pth_loss_acc_log-adam-depth4.pkl')
+    log_df2 = pd.read_pickle(f'{log_path}/conv2d_hyb_on_allClass_102v_107r.pth_loss_acc_log-sgd-depth4.pkl')
 
-    ax = log_df1.plot(x='epoch', y='loss', label='w_res')
+    _, ax = plt.subplots()
+    # set colors
+    cm = plt.get_cmap('gist_rainbow')
+    NUM_COLORS = 4
+    ax.set_prop_cycle('color', [cm(1.*i/NUM_COLORS) for i in range(NUM_COLORS)])
+
+    ax = log_df1.plot(x='epoch', y=['loss', 'acc'], ax=ax, label=['adam-loss', 'adam-acc'], alpha=0.7)
     ax.locator_params(integer=True)
-    log_df2.plot(x='epoch', y='loss', ax=ax, label='wo_res', alpha=0.7)
+    log_df2.plot(x='epoch', y=['loss', 'acc'], ax=ax, label=['sgd-loss', 'sgd-acc'], alpha=0.7)
+    
+    ax.locator_params(integer=True)
+    # Put a legend to the right of the current axis
+    ax.legend(loc='upper center', bbox_to_anchor=(0.5, 1.05),
+          ncol=3, fancybox=True, shadow=True)
+
+    plt.axhline(y=1, color='grey', alpha=0.8, linestyle='dashdot')
+    plt.axhline(y=0.9, color='grey', alpha=0.8, linestyle='dashdot')
     plt.ylim([0.0, 1.3])
     plt.show()
 
@@ -42,7 +50,7 @@ def plot_two_models():
 # plot one model
 def plot_one_model():
     # load log dataframe
-    log_df = pd.read_pickle(f'{log_path}/conv1d_loss_acc_baseline_log.pkl')
+    log_df = pd.read_pickle(f'{log_path}/conv2d_on_allClass_102v_107r.pth_loss_acc_log.pkl')
 
     # plot
     plot_loss_acc_one_model(log_df)
@@ -212,5 +220,66 @@ def plot_multiple_model_cv(cv=5):
     plt.xlim([1, each_epoch])
     plt.show()
 
+def plot_multiple_model_for_diff_training_data(num_training_set=3):
+    # for 2/3dconv
+    # logs = [{'conv2ds/conv2d_on_allClass_024r_029v.pth_loss_acc_log.pkl': '2dconv-basic', 
+    #         'conv2ds/conv2d_on_allClass_102v_107r.pth_loss_acc_log.pkl': '2dconv-basic', 
+    #         'conv2ds/conv2d_on_allClass_214v_221r.pth_loss_acc_log.pkl': '2dconv-basic', },
+    #         {'conv2ds/conv2d_hyb_on_allClass_024r_029v.pth_loss_acc_log.pkl': '2dconv-hyb', 
+    #         'conv2ds/conv2d_hyb_on_allClass_102v_107r.pth_loss_acc_log.pkl': '2dconv-hyb', 
+    #         'conv2ds/conv2d_hyb_on_allClass_214v_221r.pth_loss_acc_log.pkl': '2dconv-hyb', },
+    #         {'conv3ds/conv3d_on_allClass_024r_029v.pth_loss_acc_log.pkl': '3dconv-basic', 
+    #         'conv3ds/conv3d_on_allClass_102v_107r.pth_loss_acc_log.pkl': '3dconv-basic', 
+    #         'conv3ds/conv3d_on_allClass_214v_221r.pth_loss_acc_log.pkl': '3dconv-basic', },
+    #         {'conv3ds/conv3d_hyb_on_allClass_024r_029v.pth_loss_acc_log.pkl': '3dconv-hyb', 
+    #         'conv3ds/conv3d_hyb_on_allClass_102v_107r.pth_loss_acc_log.pkl': '3dconv-hyb', 
+    #         'conv3ds/conv3d_hyb_on_allClass_214v_221r.pth_loss_acc_log.pkl': '3dconv-hyb', },]
+    # for 2dconv_optimizer
+    logs = [{'conv2ds/conv2d_on_allClass_024r_029v.pth_loss_acc_log.pkl': '2dconv-adam', 
+            'conv2ds/conv2d_on_allClass_102v_107r.pth_loss_acc_log.pkl': '2dconv-adam', 
+            'conv2ds/conv2d_on_allClass_214v_221r.pth_loss_acc_log.pkl': '2dconv-adam', },
+            {'conv2ds/sgd/conv2d_on_allClass_024r_029v.pth_loss_acc_log.pkl': '2dconv-sgd', 
+            'conv2ds/sgd/conv2d_on_allClass_102v_107r.pth_loss_acc_log.pkl': '2dconv-sgd', 
+            'conv2ds/sgd/conv2d_on_allClass_214v_221r.pth_loss_acc_log.pkl': '2dconv-sgd', },]
 
-plot_one_model()
+    _, ax = plt.subplots()
+    # set colors
+    cm = plt.get_cmap('gist_rainbow')
+    NUM_COLORS = len(logs)*2
+    ax.set_prop_cycle('color', [cm(1.*i/NUM_COLORS) for i in range(NUM_COLORS)])
+
+    for log_set in logs:
+        # load log dataframe
+        sub_dfs = []
+        for log_name in log_set.keys():
+            sub_log_df = pd.read_pickle(f'{log_path}/{log_name}')
+            sub_dfs.append(sub_log_df)
+        log_df = pd.concat(sub_dfs)
+        total_epoch, _ = log_df.shape
+        each_epoch = int(total_epoch/num_training_set)
+    
+        loss_mean = np.mean(log_df['loss'].values.reshape(-1,each_epoch), axis=0)
+        loss_std = np.std(log_df['loss'].values.reshape(-1,each_epoch), axis=0)
+        acc_mean = np.mean(log_df['acc'].values.reshape(-1,each_epoch), axis=0)
+        acc_std = np.std(log_df['acc'].values.reshape(-1,each_epoch), axis=0)
+
+        ax.plot(log_df.iloc[:each_epoch]['epoch'], loss_mean, label=log_set[log_name]+'-loss', alpha=0.7)
+        ax.fill_between(log_df.iloc[:each_epoch]['epoch'], loss_mean - loss_std,
+                            loss_mean + loss_std, alpha=0.1)
+        ax.plot(log_df.iloc[:each_epoch]['epoch'], acc_mean, label=log_set[log_name]+'-acc', alpha=0.7)
+        ax.fill_between(log_df.iloc[:each_epoch]['epoch'], acc_mean - acc_std,
+                            acc_mean + acc_std, alpha=0.1)
+    
+    ax.grid()
+    ax.locator_params(integer=True)
+    # Put a legend to the right of the current axis
+    ax.legend(loc='upper center', bbox_to_anchor=(0.5, 1.05),
+          ncol=3, fancybox=True, shadow=True)
+
+    plt.axhline(y=1, color='grey', alpha=0.8, linestyle='dashdot')
+    plt.axhline(y=0.9, color='grey', alpha=0.8, linestyle='dashdot')
+    plt.ylim([0.0, 1.3])
+    plt.xlim([1, 301])
+    plt.show()
+
+plot_two_models()
