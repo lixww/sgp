@@ -18,13 +18,12 @@ Original version, LDA version, AE-enhanced version, Conv-1d, FConv-2d, Conv-3d-h
 <img src='/figs/results_preview/024r_029v_conv1d.png' width='100'>
 <img src='/figs/results_preview/024r_029v_fconv2d_eval_model_102v_107r.png' width='100'>
 <img src='/figs/results_preview/024r_029v_conv3d_hyb_eval_model_102v_107r.png' width='100'>
-<img src='/figs/results_preview/024r_029v_conv_patch.png' width='100'>
 <img src='/figs/results_preview/024r_029v_conv_hybrid.png' width='100'>
 <br />
 
 Images of 102v_107r
 <br />
-Original version, LDA version, AE-enhanced version, Conv-1d, Conv-2d, Conv-3d, 1x1-Conv, Conv-hybrid:
+Original version, LDA version, AE-enhanced version, Conv-1d, Conv-2d, Conv-3d, Conv-hybrid:
 <br />
 <img src='/figs/results_preview/102v_107r_orig_eval.png' width='100'>
 <img src='/figs/results_preview/102v_107r_lda.png' width='100'>
@@ -32,13 +31,12 @@ Original version, LDA version, AE-enhanced version, Conv-1d, Conv-2d, Conv-3d, 1
 <img src='/figs/results_preview/102v_107r_conv1d.png' width='100'>
 <img src='/figs/results_preview/102v_107r_fconv2d_eval_model_102v_107r.png' width='100'>
 <img src='/figs/results_preview/102v_107r_conv3d_hyb_eval_model_102v_107r.png' width='100'>
-<img src='/figs/results_preview/102v_107r_conv_patch.png' width='100'>
 <img src='/figs/results_preview/102v_107r_conv_hybrid.png' width='100'>
 <br />
 
 Images of 214v_221r
 <br />
-Original version, LDA version, AE-enhanced version, Conv-1d, Conv-2d, Conv-3d, 1x1-Conv, Conv-hybrid:
+Original version, LDA version, AE-enhanced version, Conv-1d, Conv-2d, Conv-3d, Conv-hybrid:
 <br />
 <img src='/figs/results_preview/214v_221r_orig_eval.png' width='100'>
 <img src='/figs/results_preview/214v_221r_lda.png' width='100'>
@@ -46,7 +44,6 @@ Original version, LDA version, AE-enhanced version, Conv-1d, Conv-2d, Conv-3d, 1
 <img src='/figs/results_preview/214v_221r_conv1d.png' width='100'>
 <img src='/figs/results_preview/214v_221r_fconv2d_eval_model_102v_107r.png' width='100'>
 <img src='/figs/results_preview/214v_221r_conv3d_hyb_eval_model_102v_107r.png' width='100'>
-<img src='/figs/results_preview/214v_221r_conv_patch.png' width='100'>
 <img src='/figs/results_preview/214v_221r_conv_hybrid.png' width='100'>
 <br />
 
