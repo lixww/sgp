@@ -51,12 +51,12 @@ Original version, LDA version, AE-enhanced version, 1DConvNet, 2DFConvNet, 3DCon
 ### Network Architecture
 Stacked Autoencoder [[1]](#xing2015stacked)
 <br />
-<img src='/figs/networks/sae.png' width='800'>
+<img src='/figs/networks/sae.png' width='360'>
 <br />
 
 1DConvNet [[2]](#hu2015deep)
 <br />
-<img src='/figs/networks/1dconv_basic.png' width='680'>
+<img src='/figs/networks/1dconv_basic.png' width='500'>
 <br />
 
 2DFConvNet
