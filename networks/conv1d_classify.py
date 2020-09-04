@@ -18,8 +18,8 @@ import time
 data_class = 'allClass'
 
 # file paths
-model_path = 'autoencoder/model'
-log_path = 'autoencoder/training_log/conv1d'
+model_path = 'networks/model'
+log_path = 'networks/training_log/conv1d'
 
 
 # prepare training set

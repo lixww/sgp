@@ -15,8 +15,8 @@ data_id = '102v_107r'
 conv_nd = 2
 
 # file paths
-data_path = f'autoencoder/data/sgp/{data_id}/cropped_roi/*'
-model_path = 'autoencoder/model'
+data_path = f'networks/data/sgp/{data_id}/cropped_roi/*'
+model_path = 'networks/model'
 
 def for_img_input():
     # load test data

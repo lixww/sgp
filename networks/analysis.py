@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 
 # file paths
 folder_path = '~/develop/projects/sgp/'
-data_path = folder_path + 'autoencoder/data/sgp'
+data_path = folder_path + 'networks/data/sgp'
 img_save_path = folder_path + 'autoencoder'
 
 

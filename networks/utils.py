@@ -56,7 +56,7 @@ class PatchDataset(Dataset):
         return self.patch_num
 
 
-def load_patch_dataset(data_path='autoencoder/data/sgp/folio_8_bit_extended_5x5.csv'):
+def load_patch_dataset(data_path='networks/data/sgp/folio_8_bit_extended_5x5.csv'):
     training_file = pd.read_csv(data_path)
 
     location_head = training_file.columns[2:4]
@@ -119,7 +119,7 @@ def load_patch_dataset_from_imgs(imgs_data:list, patch_size=5):
     return full_dataset, channel_len
 
 
-def load_labeled_dataset(data_path='autoencoder/data/sgp/training_file_8_bit.csv'):
+def load_labeled_dataset(data_path='networks/data/sgp/training_file_8_bit.csv'):
     training_file = pd.read_csv(data_path)
 
     location_head = training_file.columns[2:4]
@@ -150,7 +150,7 @@ def split_dataset(full_dataset:Dataset, split_ratio=0.8):
     return train_dataset, dev_dataset
 
 
-def load_raw_labeled_data(data_path='autoencoder/data/sgp/training_file_8_bit.csv'):
+def load_raw_labeled_data(data_path='networks/data/sgp/training_file_8_bit.csv'):
     training_file = pd.read_csv(data_path)
 
     channel_head = training_file.columns[4:]

@@ -17,7 +17,7 @@ from utils import FolioDataset, load_labeled_dataset
 data_class = 'allClass'
 
 # file paths
-model_path = 'autoencoder/model'
+model_path = 'networks/model'
 
 
 # prepare test set

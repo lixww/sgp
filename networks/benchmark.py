@@ -17,8 +17,8 @@ data_type = 'cropped_roi'
 
 
 # file paths
-test_data_path = f'autoencoder/data/sgp/{data_id}/{data_type}/*'
-img_save_path = 'autoencoder/reconstructed_roi/lda'
+test_data_path = f'networks/data/sgp/{data_id}/{data_type}/*'
+img_save_path = 'networks/reconstructed_roi/lda'
 
 
 

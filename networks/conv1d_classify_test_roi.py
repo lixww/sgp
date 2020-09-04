@@ -17,9 +17,9 @@ def enhance_roi (data_id):
     data_type = 'cropped_roi'
 
     # file paths
-    data_path = f'autoencoder/data/sgp/{data_id}/{data_type}/*'
-    model_path = 'autoencoder/model'
-    img_save_path = 'autoencoder/reconstructed_roi/conv1d'
+    data_path = f'networks/data/sgp/{data_id}/{data_type}/*'
+    model_path = 'networks/model'
+    img_save_path = 'networks/reconstructed_roi/conv1d'
 
     channel_len = 23
 

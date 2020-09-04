@@ -7,7 +7,7 @@ from utils import load_raw_images_data
 
 
 # file paths
-data_path = 'autoencoder/data/sgp'
+data_path = 'networks/data/sgp'
 
 
 def get_filenames(file_path):

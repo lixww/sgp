@@ -19,9 +19,9 @@ file_type = 'tif'
 w_h_no = 1
 preprocess_type = 'processed'
 
-data_path = f'autoencoder/data/sgp/{data_id}/{preprocess_type}_{data_type}/*.{file_type}'
-img_save_path = f'autoencoder/reconstructed_{data_type}'
-model_path = 'autoencoder/model'
+data_path = f'networks/data/sgp/{data_id}/{preprocess_type}_{data_type}/*.{file_type}'
+img_save_path = f'networks/reconstructed_{data_type}'
+model_path = 'networks/model'
 
 width_height_list = ((576, 380), (1164, 1088))
 img_width, img_height = width_height_list[w_h_no]

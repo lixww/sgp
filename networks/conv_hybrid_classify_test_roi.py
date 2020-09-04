@@ -21,9 +21,9 @@ is_consider_residual = True
 
 
 # file paths
-data_path = f'autoencoder/data/sgp/{data_id}/cropped_roi/*'
-model_path = 'autoencoder/model'
-img_save_path = 'autoencoder/reconstructed_roi/conv_hybrid'
+data_path = f'networks/data/sgp/{data_id}/cropped_roi/*'
+model_path = 'networks/model'
+img_save_path = 'networks/reconstructed_roi/conv_hybrid'
 
 
 # load test data

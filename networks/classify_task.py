@@ -25,8 +25,8 @@ folio_ids = ['024r_029v', '102v_107r', '214v_221r']
 data_id = folio_ids[1]
 
 # file paths
-model_path = 'autoencoder/model'
-pre_train_data_path = f'autoencoder/data/sgp/{data_id}/cropped_roi/*'
+model_path = 'networks/model'
+pre_train_data_path = f'networks/data/sgp/{data_id}/cropped_roi/*'
 
 
 # prepare training set

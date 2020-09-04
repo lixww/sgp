@@ -2,7 +2,7 @@ import pandas as pd
 
 
 # file paths
-data_path = 'autoencoder/data/sgp'
+data_path = 'networks/data/sgp'
 
 full_df = pd.read_csv(f'{data_path}/training_file_8_bit.csv')
 

@@ -18,8 +18,8 @@ import time
 data_class = 'allClass'
 
 # file paths
-model_path = 'autoencoder/model'
-log_path = 'autoencoder/training_log'
+model_path = 'networks/model'
+log_path = 'networks/training_log'
 
 # prepare training set
 full_dataset, channel_len = load_patch_dataset()

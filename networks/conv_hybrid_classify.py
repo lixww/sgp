@@ -18,9 +18,9 @@ import time
 data_class = 'allClass'
 
 # file paths
-model_path = 'autoencoder/model'
-data_path = 'autoencoder/data/sgp/folio_8_bit_extended_3x3.csv'
-log_path = 'autoencoder/training_log'
+model_path = 'networks/model'
+data_path = 'networks/data/sgp/folio_8_bit_extended_3x3.csv'
+log_path = 'networks/training_log'
 
 is_consider_residual = True
 

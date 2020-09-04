@@ -32,10 +32,10 @@ net_style = 0
 
 
 # file paths
-data_path = f'autoencoder/data/sgp/{data_id}/cropped_roi/*'
-model_path = 'autoencoder/model'
-img_save_path = 'autoencoder/reconstructed_roi'
-log_path = f'autoencoder/training_log/conv{conv_nd}ds/sgd'
+data_path = f'networks/data/sgp/{data_id}/cropped_roi/*'
+model_path = 'networks/model'
+img_save_path = 'networks/reconstructed_roi'
+log_path = f'networks/training_log/conv{conv_nd}ds/sgd'
 
 
 # load training data
