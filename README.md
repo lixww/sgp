@@ -51,27 +51,27 @@ Original version, LDA version, AE-enhanced version, 1DConvNet, 2DFConvNet, 3DCon
 ### Network Architecture
 Stacked Autoencoder [[1]](#xing2015stacked)
 <br />
-<img src='/figs/networks/sae.png' width='360'>
+<img src='/figs/network_architecture/sae.png' width='360'>
 <br />
 
 1DConvNet [[2]](#hu2015deep)
 <br />
-<img src='/figs/networks/1dconv_basic.png' width='500'>
+<img src='/figs/network_architecture/1dconv_basic.png' width='500'>
 <br />
 
 2DFConvNet
 <br />
-<img src='/figs/networks/f2dconv.png' width='800'>
+<img src='/figs/network_architecture/f2dconv.png' width='800'>
 <br />
 
 2DConvNet-hyb
 <br />
-<img src='/figs/networks/2dconv_hyb.png' width='680'>
+<img src='/figs/network_architecture/2dconv_hyb.png' width='680'>
 <br />
 
 Hybrid Convnet [[3]](#lee2016contextual)
 <br />
-<img src='/figs/networks/baseline_leecnn.png' width='800'>
+<img src='/figs/network_architecture/baseline_leecnn.png' width='800'>
 <br />
 
 
