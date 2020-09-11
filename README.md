@@ -18,7 +18,7 @@ torchvision 0.5.0 <br />
 ### To run & test: 
 - `networks/models.py`: classes of all networks. <br />
 - `networks/xxx_classify.py`: training of a network (xxx indicates the type of network) <br />
-- `networks/xxx_classify_test_roi.py`: testing of a network, outputs enhancement reconstruction of a test image <br />
+- `networks/xxx_classify_test_roi.py`: testing of a network, outputs enhancement reconstruction of a test image (NOTE: please run training before testing) <br />
 - training data can be put under `networks/data/sgp/xxx.csv` (for pixel data) and `networks/data/sgp/{folio_id}/cropped_roi/` (for cropped image patches)
 - intermediate folders created during training: `networks/training_log/`, `networks/model/`, `networks/reconstructed_xxx/`
 
