@@ -4,7 +4,7 @@ from os import rename
 
 
 
-file_path = '/Users/xiaowei/Desktop/sgp-imgs/214v-221r/'
+file_path = '~/Desktop/sgp-imgs/214v-221r/'
 folder_name = 'jpg'
 
 

@@ -7,10 +7,13 @@ import torch
 from torch.utils.data import DataLoader
 from torch import nn
 
+from pathlib import Path
+
 import models
 from utils import PatchDataset, load_raw_images_data, reconstruct_image
 from utils import load_patch_dataset_from_imgs, pad_prediction
 
+# test conv_resid: enhance undertext in the given input folio image & save the reconstruction
 
 def enhance_roi(data_id):
     data_class = 'allClass'
@@ -21,6 +24,8 @@ def enhance_roi(data_id):
     data_path = f'networks/data/sgp/{data_id}/cropped_roi/*'
     model_path = 'networks/model'
     img_save_path = 'networks/reconstructed_roi/conv_resid'
+    # mkdir if not exists
+    Path(f'{img_save_path}').mkdir(parents=True, exist_ok=True)
 
 
     # load test data

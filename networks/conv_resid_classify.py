@@ -14,12 +14,19 @@ from utils import initialize_log_dataframe, plot_loss_acc_one_model
 
 import time
 
+from pathlib import Path
+
+# train conv_resid model on folio_8_bit_extended_3x3.csv
+
 data_class = 'allClass'
 
 # file paths
 model_path = 'networks/model'
 data_path = 'networks/data/sgp/folio_8_bit_extended_3x3.csv'
 log_path = 'networks/training_log'
+# mkdir if not exists
+Path(f'{model_path}').mkdir(parents=True, exist_ok=True)
+Path(f'{log_path}').mkdir(parents=True, exist_ok=True)
 
 # prepare training set
 full_dataset, channel_len = load_patch_dataset(data_path=data_path)

@@ -1,10 +1,26 @@
 # sgp
 Trying to enhance the undertext in the [SGP dataset](http://openn.library.upenn.edu/)
 
-### Environment
-Python 3.7.4 <br />
-Pytorch 1.4.0
-<br />
+### Used Modules
+python 3.7.4 <br />
+- network building: <br />
+torch 1.4.0 <br />
+- data structures: <br />
+pandas 0.25.1 <br />
+numpy 1.17.2 <br />
+- evaluation metrics: <br />
+sklearn 0.23.2 <br />
+- images operation & curves drawing: <br />
+skimage 0.16.2 <br />
+matlpotlib 3.1.1 <br />
+torchvision 0.5.0 <br />
+
+### To run & test: 
+- `networks/models.py`: classes of all networks. <br />
+- `networks/xxx_classify.py`: training of a network (xxx indicates the type of network) <br />
+- `networks/xxx_classify_test_roi.py`: testing of a network, outputs enhancement reconstruction of a test image <br />
+- training data can be put under `networks/data/sgp/xxx.csv` (for pixel data) and `networks/data/sgp/{folio_id}/cropped_roi/` (for cropped image patches)
+- intermediate folders created during training: `networks/training_log/`, `networks/model/`, `networks/reconstructed_xxx/`
 
 
 ### Results preview (on cropped Tiff * rescale-0.25)

@@ -20,6 +20,8 @@ from utils import load_labeled_dataset, split_dataset
 from utils import load_images_data
 
 
+# train sae on training_file_8_bit.csv
+
 data_class = 'allClass'
 folio_ids = ['024r_029v', '102v_107r', '214v_221r']
 data_id = folio_ids[1]

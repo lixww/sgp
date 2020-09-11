@@ -21,6 +21,11 @@ from utils import plot_loss_acc_one_model
 
 import time
 
+from pathlib import Path
+
+
+# train nd[normal/f/hyb]_conv on sae-labeled images of a folio
+# n: [2/3]
 
 data_class = 'allClass'
 folio_ids = ['024r_029v', '102v_107r', '214v_221r']
@@ -36,6 +41,10 @@ data_path = f'networks/data/sgp/{data_id}/cropped_roi/*'
 model_path = 'networks/model'
 img_save_path = 'networks/reconstructed_roi'
 log_path = f'networks/training_log/conv{conv_nd}ds/sgd'
+# mkdir if not exists
+Path(f'{model_path}').mkdir(parents=True, exist_ok=True)
+Path(f'{log_path}').mkdir(parents=True, exist_ok=True)
+Path(f'{img_save_path}').mkdir(parents=True, exist_ok=True)
 
 
 # load training data

@@ -7,10 +7,12 @@ import torch
 from torch.utils.data import DataLoader
 from torch import nn
 
+from pathlib import Path
+
 import models
 from utils import FolioDataset, load_images_data, reconstruct_image
 
-
+# test conv1d: enhance undertext in the given input folio image & save the reconstruction
 
 def enhance_roi (data_id):
     data_class = 'allClass'
@@ -20,6 +22,8 @@ def enhance_roi (data_id):
     data_path = f'networks/data/sgp/{data_id}/{data_type}/*'
     model_path = 'networks/model'
     img_save_path = 'networks/reconstructed_roi/conv1d'
+    # mkdir if not exists
+    Path(f'{img_save_path}').mkdir(parents=True, exist_ok=True)
 
     channel_len = 23
 

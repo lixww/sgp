@@ -13,11 +13,15 @@ from torch import optim
 
 from sklearn.preprocessing import normalize
 
+from pathlib import Path
+
 import models
 from utils import FolioDataset, load_raw_images_data
 from utils import reconstruct_image, get_sample_image
 
 
+# test nd[normal/f/hyb]_conv: enhance undertext in the given input folio image & save the reconstruction
+# n: [2/3]
 
 def enhanced_roi(data_id):
     data_class = 'allClass'
@@ -33,6 +37,8 @@ def enhanced_roi(data_id):
     data_path = f'networks/data/sgp/{data_id}/cropped_roi/*'
     model_path = 'networks/model'
     img_save_path = 'networks/reconstructed_roi'
+    # mkdir if not exists
+    Path(f'{img_save_path}').mkdir(parents=True, exist_ok=True)
 
 
     # load images

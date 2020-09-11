@@ -7,11 +7,14 @@ import torch
 from torch.utils.data import DataLoader
 from torch import nn
 
+from pathlib import Path
+
 import models
 from utils import PatchDataset, load_raw_images_data, reconstruct_image
 from utils import load_patch_dataset_from_imgs, pad_prediction
 
 
+# test conv_hybrid: enhance undertext in the given input folio image & save the reconstruction
 
 data_class = 'allClass'
 folio_ids = ['024r_029v', '102v_107r', '214v_221r']
@@ -24,6 +27,8 @@ is_consider_residual = True
 data_path = f'networks/data/sgp/{data_id}/cropped_roi/*'
 model_path = 'networks/model'
 img_save_path = 'networks/reconstructed_roi/conv_hybrid'
+# mkdir if not exists
+Path(f'{img_save_path}').mkdir(parents=True, exist_ok=True)
 
 
 # load test data

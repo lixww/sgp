@@ -14,12 +14,19 @@ from utils import initialize_log_dataframe, plot_loss_acc_one_model
 
 import time
 
+from pathlib import Path
+
+
+# try using cae to train data in training_file_8_bit.csv
 
 data_class = 'allClass'
 
 # file paths
 model_path = 'networks/model'
 log_path = 'networks/training_log'
+# mkdir if not exists
+Path(f'{model_path}').mkdir(parents=True, exist_ok=True)
+Path(f'{log_path}').mkdir(parents=True, exist_ok=True)
 
 
 # prepare training set

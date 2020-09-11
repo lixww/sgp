@@ -7,10 +7,13 @@ import torch
 from torch.utils.data import DataLoader
 from torch import nn
 
+from pathlib import Path
+
 import models
 from utils import FolioDataset, load_images_data, reconstruct_image
 
 
+# test sae: enhance undertext in the given input folio image & save the reconstruction
 
 data_class = 'allClass'
 folio_ids = ['024r_029v', '102v_107r', '214v_221r']
@@ -22,6 +25,8 @@ data_type = 'cropped_roi'
 data_path = f'networks/data/sgp/{data_id}/cropped_roi/*'
 model_path = 'networks/model'
 img_save_path = 'networks/reconstructed_roi/ae'
+# mkdir if not exists
+Path(f'{img_save_path}').mkdir(parents=True, exist_ok=True)
 
 channel_len = 23
 

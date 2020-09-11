@@ -8,6 +8,8 @@ from skimage.io import imread_collection
 from skimage.io import imread
 from skimage.io import imsave
 
+from pathlib import Path
+
 from models import simple_ae
 
 
@@ -19,6 +21,8 @@ preprocess_type = 'processed'
 data_path = f'networks/data/sgp/{data_id}/{preprocess_type}_{data_type}/*'
 img_save_path = f'networks/reconstructed_{data_type}'
 model_path = 'networks/model'
+# mkdir if not exists
+Path(f'{img_save_path}').mkdir(parents=True, exist_ok=True)
 
 width_height_list = ((576, 380), (1164, 1088))
 img_width, img_height = width_height_list[w_h_no]

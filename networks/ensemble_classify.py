@@ -12,7 +12,7 @@ from sklearn.metrics import precision_score
 import models
 from utils import FolioDataset, load_labeled_dataset
 
-
+# try merging prediction of two models
 
 data_class = 'allClass'
 

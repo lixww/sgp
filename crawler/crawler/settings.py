@@ -89,7 +89,7 @@ ITEM_PIPELINES = {
 #HTTPCACHE_IGNORE_HTTP_CODES = []
 #HTTPCACHE_STORAGE = 'scrapy.extensions.httpcache.FilesystemCacheStorage'
 
-FILES_STORE = '/Users/xiaowei/Desktop/sgp-imgs/214v-221r'
+FILES_STORE = '~/Desktop/sgp-imgs/214v-221r'
 
 FILES_URLS_FIELD = 'jpg_urls'
 FILES_RESULT_FIELD = 'jpg_imgs'

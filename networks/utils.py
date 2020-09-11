@@ -16,6 +16,8 @@ from sklearn.model_selection import learning_curve
 import matplotlib.pyplot as plt
 
 
+# here are some utility functions
+
 class FolioDataset(Dataset):
     def __init__(self, location, channel, grdtruth, 
                  location_head=None, channel_head=None):

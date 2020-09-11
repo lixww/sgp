@@ -11,6 +11,7 @@ import models
 from utils import FolioDataset, load_labeled_dataset
 
 
+# test sae: plot distribution of output prediction
 
 data_class = 'allClass'
 

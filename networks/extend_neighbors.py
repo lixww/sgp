@@ -45,11 +45,11 @@ extend_pxls = pd.DataFrame(columns=center_pxls.columns)
 for folio_name in target_folio:
     print('process on', folio_name, '..')
     # load images
-    file_path = f'/Users/xiaowei/Desktop/sgp-imgs/{folio_name}/tif/'
+    file_path = f'~/Desktop/sgp-imgs/{folio_name}/tif/'
     filenames = get_filenames(file_path)
     imgs = load_raw_images_data(filenames, preserve_range_after_rescale=True)
     channel_len = len(imgs)
-    # find neighbors: [(5x5), (3x3)]
+    # find neighbors: [(5x5): radius-2, (3x3): radius-1]
     radius = 1
     pxls_index = center_pxls.loc[center_pxls['folio_name'] == folio_name].index
     for i in pxls_index:

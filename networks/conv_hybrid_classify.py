@@ -14,6 +14,10 @@ from utils import initialize_log_dataframe
 
 import time
 
+from pathlib import Path
+
+
+# train conv_hybrid model on folio_8_bit_extended_3x3.csv
 
 data_class = 'allClass'
 
@@ -21,6 +25,9 @@ data_class = 'allClass'
 model_path = 'networks/model'
 data_path = 'networks/data/sgp/folio_8_bit_extended_3x3.csv'
 log_path = 'networks/training_log'
+# mkdir if not exists
+Path(f'{model_path}').mkdir(parents=True, exist_ok=True)
+Path(f'{log_path}').mkdir(parents=True, exist_ok=True)
 
 is_consider_residual = True
 

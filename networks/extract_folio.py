@@ -1,5 +1,6 @@
 import pandas as pd
 
+# extract pixels of selected folio images from training_file_8_bit.csv
 
 # file paths
 data_path = 'networks/data/sgp'

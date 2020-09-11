@@ -7,10 +7,14 @@ from sklearn.metrics import cohen_kappa_score
 
 from skimage.io import imsave
 
+from pathlib import Path
+
 from utils import load_raw_labeled_data
 from utils import load_raw_images_data, flatten_images, reconstruct_image
 from utils import plot_learning_curve
 
+
+# use sklearn.lda as benchmark model to train data in training_file_8_bit.csv
 
 data_id = '102v_107r'
 data_type = 'cropped_roi'
@@ -19,6 +23,8 @@ data_type = 'cropped_roi'
 # file paths
 test_data_path = f'networks/data/sgp/{data_id}/{data_type}/*'
 img_save_path = 'networks/reconstructed_roi/lda'
+# mkdir if not exists
+Path(f'{img_save_path}').mkdir(parents=True, exist_ok=True)
 
 
 

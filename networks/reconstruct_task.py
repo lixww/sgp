@@ -10,8 +10,11 @@ from torch.utils.data import DataLoader
 from torchvision import transforms
 from torchvision.utils import save_image
 
+from pathlib import Path
+
 from models import simple_ae
 
+# train a simple_autoencoder
 
 data_id = '102v_107r'
 data_type = 'snip'
@@ -22,6 +25,8 @@ preprocess_type = 'processed'
 data_path = f'networks/data/sgp/{data_id}/{preprocess_type}_{data_type}/*.{file_type}'
 img_save_path = f'networks/reconstructed_{data_type}'
 model_path = 'networks/model'
+# mkdir if not exists
+Path(f'{img_save_path}').mkdir(parents=True, exist_ok=True)
 
 width_height_list = ((576, 380), (1164, 1088))
 img_width, img_height = width_height_list[w_h_no]

@@ -3,12 +3,15 @@ import pandas as pd
 import numpy as np
 from skimage.io import imsave
 import matplotlib.pyplot as plt
+from pathlib import Path
 
 
 # file paths
 folder_path = '~/develop/projects/sgp/'
 data_path = folder_path + 'networks/data/sgp'
 img_save_path = folder_path + 'autoencoder'
+# mkdir if not exists
+Path(f'{img_save_path}').mkdir(parents=True, exist_ok=True)
 
 
 # prepare training set
